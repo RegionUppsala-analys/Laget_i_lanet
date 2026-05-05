@@ -156,6 +156,7 @@ Kopiera därefter innehållet i _site och publicera till webb-repot.
 
 - Skapa ett gemensamt repo för funktioner som kan återanvändas via source() → bättre versionshantering och minskad duplicering
 
+
 - Centralisera mediabank (bilder) i GitHub → undvik lokala beroenden
 
 - Använd explicita paketanrop, t.ex.: ggplot2::ggplot() istället för ggplot() → minskar risk för konflikter mellan paket
