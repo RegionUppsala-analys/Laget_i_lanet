@@ -1,7 +1,8 @@
 ########## Funktion för att söka och ladda data från Kolada ###########
 {
-  source("https://github.com/RegionUppsala-analys/Laget_i_lanet/blob/main/Functions/general_functions/install_load_packages.R")
-  source("https://github.com/RegionUppsala-analys/Laget_i_lanet/blob/main/Functions/general_functions/settings.R")
+  source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions/general_functions/install_load_packages.R")
+  
+  source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions/general_functions/settings.R")
   
   install_and_load()
   settings <- get_settings()
