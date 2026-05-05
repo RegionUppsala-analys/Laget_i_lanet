@@ -156,6 +156,20 @@ Kopiera därefter innehållet i _site och publicera till webb-repot.
 
 - Skapa ett gemensamt repo för funktioner som kan återanvändas via source() → bättre versionshantering och minskad duplicering
 
+Detta är påbörjat men ej avslutat än.
+
+Exempel på hur man kan läsa in:
+```r
+base_url <- "https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions"
+
+files <- c(
+  "general_functions/install_load_packages.R",
+  "general_functions/settings.R",
+  "get_data/search_kolada.R"
+)
+
+lapply(paste0(base_url, "/", files), source)
+```
 
 - Centralisera mediabank (bilder) i GitHub → undvik lokala beroenden
 
