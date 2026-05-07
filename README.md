@@ -10,6 +10,7 @@ Rapporterna skapas genom rendering av `.qmd`-filer till HTML i R (Quarto). För 
 Vid skapande av nya rapporter kan strukturen och inledande kod enkelt kopieras från tidigare rapporter, eftersom dessa följer samma uppbyggnad.
 
 För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI för att få allt i samma struktur. 
+Alla funktioner tillhörande en rapport laddas ej upp här, detta beror på att de behandlar känslig information och hittas i enskilt repo för rapporten. Data ska aldrig laddas upp.
 
 
 ---
