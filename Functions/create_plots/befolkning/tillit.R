@@ -2,7 +2,7 @@
 
 tillit <- function(){
   # Läser in data
-  df <- read.csv('Data/df_tillit.csv') %>% filter(year == 2024,
+  df <- read.csv('Data/df_tillit.csv') %>% filter(year == max(year),
                                                   title != 'Sociala relationer och tillit - Kommunindex')
   
   # Fixar titlar
