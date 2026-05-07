@@ -36,7 +36,7 @@ suicid <- function(){
     )
     
     ggsave(
-      paste0("Figurer/suicid",r,".png"),
+      paste0("Figurer/suicid_",r,".png"),
       plot = p,
       width = 8,
       height = 6,

@@ -71,42 +71,6 @@ func_df_psykisk_halsa <- function(){
   
 }
 
-# Stress 
-func_df_psykisk_stress <- function(){# https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/sv/A_Folkhalsodata/A_Folkhalsodata__Z_ovrigdata__HLVkn__Psykhals/stress.px/table/tableViewLayout1/
-  url <- 'https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/v1/sv/A_Folkhalsodata/Z_ovrigdata/HLVkn/Psykhals/stress.px'
-  
-  # Metadata
-  meta <- pxweb_get(url)
-  
-  
-  px_get_list <- list(Region = kommunkod,
-                      Stressnivå = '*',
-                      Kön = c('00'),
-                      "Andel och konfidensintervall" = '*',
-                      År = '*')
-  
-  px_get <- pxweb_get(url,px_get_list)
-  
-  # laddar data och gör till rätt format
-  df_psykist <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
-  # Gör till wide
-  df_psykist <- df_psykist %>% pivot_wider(id_cols= c("Region", "Kön", "År", "Stressnivå"), 
-                                           names_from = `Andel och konfidensintervall`, 
-                                           values_from = `Stressad (självrapporterat) efter kön, region och år. Andel (procent).`)
-  
-  # Tar bort siffror från namn
-  df_psykist$Region <- gsub("[0-9]+ *","",df_psykist$Region)
-  
-  
-  # sparar data med variabler:
-  write.csv(df_psykist, "Data/df_psykisk_stress.csv", row.names = F)
-  
-  print('Nedladdning av "df_psykisk_stress.csv" genomfördes')
-  
-  
-}
-
 
 # Psykiska variabler
 func_df_psykiska_variabler <- function(){ # https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/sv/A_Folkhalsodata/A_Folkhalsodata__B_HLV__dPsykhals/hlv1psyxreg.px/table/tableViewLayout1/
@@ -142,79 +106,6 @@ func_df_psykiska_variabler <- function(){ # https://fohm-app.folkhalsomyndighete
   write.csv(df_psykist, "Data/df_psykiska_variabler.csv", row.names = F)
   
   print('Nedladdning av "df_psykiska_variabler.csv" genomfördes')
-}
-
-# Sömnbesvär
-func_somnbesvar <- function(){# https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/sv/A_Folkhalsodata/A_Folkhalsodata__Z_ovrigdata__HLVkn__Psykhals/somn.px/table/tableViewLayout1/
-  url <- 'https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/v1/sv/A_Folkhalsodata/Z_ovrigdata/HLVkn/Psykhals/somn.px'
-  
-  # Metadata
-  meta <- pxweb_get(url)
-  
-  
-  px_get_list <- list(Region = kommunkod,
-                      Sömnbesvär = '*',
-                      Kön = c('00'),
-                      "Andel och konfidensintervall" = '*',
-                      År = '*')
-  
-  px_get <- pxweb_get(url,px_get_list)
-  
-  # laddar data och gör till rätt format
-  df_psykist <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
-  # Gör till wide
-  df_psykist <- df_psykist %>% pivot_wider(id_cols= c("Region", "Kön", "År", "Sömnbesvär"), 
-                                           names_from = `Andel och konfidensintervall`, 
-                                           values_from = `Andel med sömnbesvär`)
-  
-  # Tar bort siffror från namn
-  df_psykist$Region <- gsub("[0-9]+ *","",df_psykist$Region)
-  
-  
-  # sparar data med variabler:
-  write.csv(df_psykist, "Data/df_somn.csv", row.names = F)
-  
-  print('Nedladdning av "df_somn.csv" genomfördes')
-  
-  
-}
-
-
-# oro, ångest
-func_df_oro <- function(){# https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/sv/A_Folkhalsodata/A_Folkhalsodata__Z_ovrigdata__HLVkn__Psykhals/angest.px/table/tableViewLayout1/
-  url <- 'https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/v1/sv/A_Folkhalsodata/Z_ovrigdata/HLVkn/Psykhals/angest.px'
-  
-  # Metadata
-  meta <- pxweb_get(url)
-  
-  
-  px_get_list <- list(Region = kommunkod,
-                      Besvär = '*',
-                      Kön = c('00'),
-                      "Andel och konfidensintervall" = '*',
-                      År = '*')
-  
-  px_get <- pxweb_get(url,px_get_list)
-  
-  # laddar data och gör till rätt format
-  df_psykist <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
-  # Gör till wide
-  df_psykist <- df_psykist %>% pivot_wider(id_cols= c("Region", "Kön", "År", "Besvär"), 
-                                           names_from = `Andel och konfidensintervall`, 
-                                           values_from = `Andel med besvär av ängslan, oro eller ångest`)
-  
-  # Tar bort siffror från namn
-  df_psykist$Region <- gsub("[0-9]+ *","",df_psykist$Region)
-  
-  
-  # sparar data med variabler:
-  write.csv(df_psykist, "Data/df_oro.csv", row.names = F)
-  
-  print('Nedladdning av "df_oro.csv" genomfördes')
-  
-  
 }
 
 
