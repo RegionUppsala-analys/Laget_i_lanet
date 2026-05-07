@@ -9,6 +9,9 @@ Rapporterna skapas genom rendering av `.qmd`-filer till HTML i R (Quarto). För 
 
 Vid skapande av nya rapporter kan strukturen och inledande kod enkelt kopieras från tidigare rapporter, eftersom dessa följer samma uppbyggnad.
 
+För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI för att få allt i samma struktur. 
+
+
 ---
 
 ## Struktur
@@ -156,7 +159,7 @@ Kopiera därefter innehållet i _site och publicera till webb-repot.
 
 - Skapa ett gemensamt repo för funktioner som kan återanvändas via source() → bättre versionshantering och minskad duplicering
 
-Detta är påbörjat men ej avslutat än.
+Detta är påbörjat för att skapa en struktur, men eftersom många funktioner för datahantering ska uppdateras till pxweb v2 i höst så får detta arbete tas vid då. 
 
 Exempel på hur man kan läsa in:
 ```r
