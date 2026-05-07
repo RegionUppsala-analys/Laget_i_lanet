@@ -12,6 +12,9 @@ Vid skapande av nya rapporter kan strukturen och inledande kod enkelt kopieras f
 För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI för att få allt i samma struktur. 
 Alla funktioner tillhörande en rapport laddas ej upp här, detta beror på att de behandlar känslig information och hittas i enskilt repo för rapporten. Data ska aldrig laddas upp.
 
+Om nya bilder laddas ned från regionens mediabank så ska de läggas in och pushas upp till detta repo! 
+För tillfället måste mediabanken laddas ned innan rendering av rapporter, att ha dem lokalt kan ge fördelar vid rendering.
+
 
 ---
 
@@ -158,9 +161,10 @@ Kopiera därefter innehållet i _site och publicera till webb-repot.
 
 ## Förbättringsarbete
 
-- Skapa ett gemensamt repo för funktioner som kan återanvändas via source() → bättre versionshantering och minskad duplicering
+- Alla funktioner ska tas in via source() → bättre versionshantering och minskad duplicering
 
-Detta är påbörjat för att skapa en struktur, men eftersom många funktioner för datahantering ska uppdateras till pxweb v2 i höst så får detta arbete tas vid då. 
+Detta är påbörjat för att skapa en struktur genom att ha laddat upp kod, source är ej inlaggt i rapporterna än,
+eftersom många funktioner för datahantering ska uppdateras till pxweb v2 i höst så får detta arbete tas vid då. 
 
 Exempel på hur man kan läsa in:
 ```r
@@ -176,14 +180,13 @@ lapply(paste0(base_url, "/", files), source)
 ```
 
 - Centralisera mediabank (bilder) i GitHub → undvik lokala beroenden
+Mediabanken är uppladdad i detta repo, men ingen rapporter sourcar dem än!
 
 - Använd explicita paketanrop, t.ex.: ggplot2::ggplot() istället för ggplot() → minskar risk för konflikter mellan paket
 
 - Inför kontroll i datahämtning:
     - jämför senaste sparade år med tillgängligt data
     - undvik onödig nedladdning
-
-- Strukturera datahämtning i funktioner → underlättar återanvändning och centralisering
 
 - Automatisera uppdatering av innehåll i index.html
 
