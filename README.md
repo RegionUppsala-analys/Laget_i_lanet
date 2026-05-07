@@ -9,7 +9,7 @@ Rapporterna skapas genom rendering av `.qmd`-filer till HTML i R (Quarto). För 
 
 Vid skapande av nya rapporter kan strukturen och inledande kod enkelt kopieras från tidigare rapporter, eftersom dessa följer samma uppbyggnad.
 
-För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI för att få allt i samma struktur. 
+För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI(Claude) för att få allt i samma struktur. 
 Alla funktioner tillhörande en rapport laddas ej upp här, detta beror på att de behandlar känslig information och hittas i enskilt repo för rapporten. Data ska aldrig laddas upp.
 
 Om nya bilder laddas ned från regionens mediabank så ska de läggas in och pushas upp till detta repo! 
@@ -49,6 +49,9 @@ För tillfället måste mediabanken laddas ned innan rendering av rapporter, att
   Detta är huvudskriptet för att uppdatera rapporter.
   Läs noggrant igenom eventuella kommentarer!
       
+      
+- **övriga funktioner**
+  Utöver dessa så kan det skilja sig mellan vilka filer som tillhör en rapport, vissa har filer som skrapar data från olika hemsidor eller gör speciella beräkningar etc.
 ---
 
 ### Data
