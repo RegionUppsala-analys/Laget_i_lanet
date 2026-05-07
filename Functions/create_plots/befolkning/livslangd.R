@@ -141,7 +141,7 @@ livslangd <- function(){
 
 
 
-livsland_tid <- function(){
+livslangd_tid <- function(){
   # Läser in data
   df <- read.csv('Data/df_livslangd.csv') 
   

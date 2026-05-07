@@ -119,17 +119,6 @@ Hämtar andelen med allvarlig psykisk påfrestning (Kessler 6-skalan) per region
 
 ------------------------------------------------------------------------
 
-### `func_df_psykisk_stress()`
-
-Hämtar andelen stressade och mycket stressade per stressnivå och kön, per kommunkod (totalt kön `'00'`).
-
--   **FoHM-tabell:** stress (HLVkn)
--   **Sparas som:** `Data/df_psykisk_stress.csv`
-
-> **OBS!** Diagramfunktionerna `Psykisk_stress()` och `svar_psykisk_stress()` läser från `df_psykiska_variabler.csv` (genererad av `func_df_psykiska_variabler()`) – inte från denna fil. Filen `df_psykisk_stress.csv` verkar därför inte användas och kan vara ett kvarglömt steg.
-
-------------------------------------------------------------------------
-
 ### `func_df_sjalvrapporterad()`
 
 Hämtar andelen barn med minst 2 återkommande fysiska eller psykiska besvär (psykosomatiska besvär), per kön och region. Kön: Pojkar (`'1'`) och Flickor (`'2'`).
@@ -167,27 +156,6 @@ Hämtar samlad data för flera psykiska hälsovariabler (stress, sömnbesvär, �
 
 ------------------------------------------------------------------------
 
-### `func_somnbesvar()`
-
-Hämtar andelen med sömnbesvär (totalt, lätta, svåra) per kommunkod (totalt kön). Pivoteras med sömnbesvärskategori och konfidensintervall.
-
--   **FoHM-tabell:** somn (HLVkn)
--   **Sparas som:** `Data/df_somn.csv`
-
-> **OBS!** Diagramfunktionerna `somn()` och `svara_somn()` läser från `df_psykiska_variabler.csv`, inte från denna fil.
-
-------------------------------------------------------------------------
-
-### `func_df_oro()`
-
-Hämtar andelen med ängslan, oro eller ångest (besvär och svåra besvär) per kommunkod (totalt kön). Pivoteras med besvärskategori och konfidensintervall.
-
--   **FoHM-tabell:** angest (HLVkn)
--   **Sparas som:** `Data/df_oro.csv`
-
-> **OBS!** Diagramfunktionen `oro_angest()` läser från `df_psykiska_variabler.csv`, inte från denna fil.
-
-------------------------------------------------------------------------
 
 ### `func_df_tillit_till_andra()`
 
@@ -378,7 +346,7 @@ Interaktivt Plotly-stapeldiagram med återstående medellivslängd från 30 års
 
 ------------------------------------------------------------------------
 
-### `livsland_tid()`
+### `livslangd_tid()`
 
 Tidsserieplot per region som visar återstående medellivslängd från 30 år per utbildningsnivå och kön (facets). Enbart Riket visar kategorin "Uppgift Saknas". Skapar en fil per region.
 
@@ -441,7 +409,6 @@ Linjediagram per kommun med suicid per 100 000 invånare (25%-åldersstandardise
 -   **Indata:** `Data/df_suicid.csv`
 -   **Sparas som:** `Figurer/suicid_[KommunNamn].svg/.png`
 
-> **OBS!** PNG-filnamnet saknar understreck (`suicid[KommunNamn].png` istället för `suicid_[KommunNamn].png`). SVG-filen namnges korrekt.
 
 ------------------------------------------------------------------------
 
