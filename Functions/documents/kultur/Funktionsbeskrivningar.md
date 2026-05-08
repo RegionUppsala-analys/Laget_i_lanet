@@ -396,12 +396,10 @@ Horisontellt stapeldiagram som visar fördelningen av kulturföretag per omsätt
 
 ## Kulturdatabasen (KDB)
 
-> Alla KDB-funktioner läser från `Data/KDB-Uppsala.xlsx`. Filen måste laddas ned manuellt från Kulturrådet. Dataparsningen är komplex: kolumnnamn hämtas från rad 6 (skip=5), och datablocket lokaliseras via `which()` på radinnehållet.
 
 ### `forestallning_konsert()`
 Visar publiksnittet per föreställning/konsert (Publik / Föreställningar) uppdelat på typ (Egen och samproduktion / Gästspel) för varje intern plats (totalt i länet, övriga interna m.fl.). Skapar ett diagram per plats.
 
-- **KDB-sheet:** `3 - Tidsserier`, sektion `4.3`
 - **Sparas som:** `Figurer/forestallning_konsert_[Plats].svg/.png`
 
 
@@ -436,14 +434,14 @@ Visar intäktsutvecklingen per museum från `kulturdatabasen.xlsx`. Hoppar över
 ---
 
 ### `inkomst_per_verksamhet_2()`
-Visar intäkter och kostnader per intern plats från `KDB-Uppsala.xlsx` (sektion `4.1`). Avgränsar datablocket till att sluta före sektion `4.2`. Hoppar över platser med bara en observation.
+Visar intäkter och kostnader per intern plats 
 
 - **Sparas som:** `Figurer/inkomst_per_verksamhet_[Plats].svg/.png`
 
 ---
 
 ### `bidrag_per_verksamhet()`
-Visar intäktskategorier (bidrag m.m.) per intern KDB-plats för senaste tillgängliga år som horisontella staplar. Lovar textetiketter med antal kr till höger om staplarna. Läser sektion `2.1` från sheet `4 - Org, ekonomi och personal`, avgränsat till raden `2.1b Årliga bidrag`.
+Visar intäktskategorier (bidrag m.m.) per intern KDB-plats för senaste tillgängliga år som horisontella staplar. Lovar textetiketter med antal kr till höger om staplarna.
 
 - **Sparas som:** `Figurer/intakt_bidrag_[Plats].svg/.png`
 
@@ -615,7 +613,6 @@ Båda tabellerna har fast färgdomän baserad på respektive mått.
 ## `forestallning_konsert_tbl()`
 `gt`-tabell med scenföreställningsdata (publik och föreställningar uppdelat på typ och plats) för senaste tillgängliga år från KDB. Dataparsning identisk med diagramfunktionerna. Färgkodas med global min/max.
 
-- **Indata:** `Data/KDB-Uppsala.xlsx`, sheet `3 - Tidsserier`, sektion `4.3`
 - **Returneras** som `gt`-tabell.
 
 ---
