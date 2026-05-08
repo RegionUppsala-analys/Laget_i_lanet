@@ -67,7 +67,7 @@ func_df_amne<- function(){ #
 
 
 # Könsfördelning kulturskola
-df_skola_kon <- function(){ #  
+func_df_skola_kon <- function(){ #  
   df_skola_kon<- search_and_fetch_kolada("Flickor i kulturskolan, 6-19 år, andel (%)", match=0)
   df_skola_kon <- df_skola_kon %>% filter(year >= 2010, !is.na(value))
   

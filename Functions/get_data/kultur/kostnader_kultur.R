@@ -35,59 +35,60 @@ func_df_nettokostnad <- function(){ # Nettokostnad kulturverksamhet, kr/inv
 
 
 
+
 ## Kostnader -> Gjort det lite lätt för mig och inte ändrat variabelnamn etc
 func_df_Kostnad_intakt <- function(){ # kostnad kulturverksamhet, kr/inv
-  df_nettokostnad_k<- search_and_fetch_kolada("Kostnad kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_k <- df_nettokostnad_k %>% filter(year >= 2010, !is.na(value), 
-                                                    title=="Kostnad kulturverksamhet, kr/inv")
+  df_kostnad_k<- search_and_fetch_kolada("Kostnad kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
+  df_kostnad_k <- df_kostnad_k %>% filter(year >= 2010, !is.na(value), 
+                                          title=="Kostnad kulturverksamhet, kr/inv")
   
   # kostnad allmän kulturverksamhet, kr/inv
-  df_nettokostnad_ak<- search_and_fetch_kolada("Kostnad allmän kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_ak <- df_nettokostnad_ak %>% filter(year >= 2010, !is.na(value), 
-                                                      title=="Kostnad allmän kulturverksamhet, kr/inv") 
+  df_kostnad_ak<- search_and_fetch_kolada("Kostnad allmän kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
+  df_kostnad_ak <- df_kostnad_ak %>% filter(year >= 2010, !is.na(value), 
+                                            title=="Kostnad allmän kulturverksamhet, kr/inv") 
   
   # kostnad bibliotek, kr/inv
-  df_nettokostnad_b<- search_and_fetch_kolada("Kostnad bibliotek, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_b <- df_nettokostnad_b %>% filter(year >= 2010, !is.na(value), 
-                                                    title=="Kostnad bibliotek, kr/inv")  
+  df_kostnad_b<- search_and_fetch_kolada("Kostnad bibliotek, kr/inv", match=0, kommunkod = "Alla")
+  df_kostnad_b <- df_kostnad_b %>% filter(year >= 2010, !is.na(value), 
+                                          title=="Kostnad bibliotek, kr/inv")  
   
   # kostnad musik- och kulturskola, kr/inv
-  df_nettokostnad_mk<- search_and_fetch_kolada("Kostnad musik- och kulturskola, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_mk <- df_nettokostnad_mk %>% filter(year >= 2010, !is.na(value), 
-                                                      title=="Kostnad musik- och kulturskola, kr/inv")  
+  df_kostnad_mk<- search_and_fetch_kolada("Kostnad musik- och kulturskola, kr/inv", match=0, kommunkod = "Alla")
+  df_kostnad_mk <- df_kostnad_mk %>% filter(year >= 2010, !is.na(value), 
+                                            title=="Kostnad musik- och kulturskola, kr/inv")  
   
   # kostnad stöd till studieorganisationer, kr/inv
-  df_nettokostnad_s<- search_and_fetch_kolada("Kostnad stöd till studieorganisationer, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_s <- df_nettokostnad_s %>% filter(year >= 2010, !is.na(value), 
-                                                    title=="Kostnad stöd till studieorganisationer, kr/inv")  
+  df_kostnad_s<- search_and_fetch_kolada("Kostnad stöd till studieorganisationer, kr/inv", match=0, kommunkod = "Alla")
+  df_kostnad_s <- df_kostnad_s %>% filter(year >= 2010, !is.na(value), 
+                                          title=="Kostnad stöd till studieorganisationer, kr/inv")  
   
-  df_nettokostnad <- rbind(df_nettokostnad_k,df_nettokostnad_ak,df_nettokostnad_b,
-                           df_nettokostnad_mk,df_nettokostnad_s)
+  df_nettokostnad <- rbind(df_kostnad_k,df_kostnad_ak,df_kostnad_b,
+                           df_kostnad_mk,df_kostnad_s)
   
   # Intäkter
   
   # Intäkter kulturverksamhet, kr/inv
-  df_nettokostnad_k<- search_and_fetch_kolada("Intäkter kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_k <- df_nettokostnad_k %>% filter(year >= 2010, !is.na(value))
+  df_intakt_k<- search_and_fetch_kolada("Intäkter kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
+  df_intakt_k <- df_intakt_k %>% filter(year >= 2010, !is.na(value))
   
   # Intäkter allmän kulturverksamhet, kr/inv
-  df_nettokostnad_ak<- search_and_fetch_kolada("Intäkter allmän kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_ak <- df_nettokostnad_ak %>% filter(year >= 2010, !is.na(value))
+  df_intakt_ak<- search_and_fetch_kolada("Intäkter allmän kulturverksamhet, kr/inv", match=0, kommunkod = "Alla")
+  df_intakt_ak <- df_intakt_ak %>% filter(year >= 2010, !is.na(value))
   
   # Intäkter bibliotek, kr/inv
-  df_nettokostnad_b<- search_and_fetch_kolada("Intäkter bibliotek, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_b <- df_nettokostnad_b %>% filter(year >= 2010, !is.na(value))  
+  df_intakt_b<- search_and_fetch_kolada("Intäkter bibliotek, kr/inv", match=0, kommunkod = "Alla")
+  df_intakt_b <- df_intakt_b %>% filter(year >= 2010, !is.na(value))  
   
   # Intäkter musik- och kulturskola, kr/inv
-  df_nettokostnad_mk<- search_and_fetch_kolada("Intäkter musik- och kulturskola, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_mk <- df_nettokostnad_mk %>% filter(year >= 2010, !is.na(value)) 
+  df_intakt_mk<- search_and_fetch_kolada("Intäkter musik- och kulturskola, kr/inv", match=0, kommunkod = "Alla")
+  df_intakt_mk <- df_intakt_mk %>% filter(year >= 2010, !is.na(value)) 
   
   # Intäkter stöd till studieorganisationer, kr/inv
-  df_nettokostnad_s<- search_and_fetch_kolada("Intäkter stöd till studieorganisationer, kr/inv", match=0, kommunkod = "Alla")
-  df_nettokostnad_s <- df_nettokostnad_s %>% filter(year >= 2010, !is.na(value))
+  df_intakt_s<- search_and_fetch_kolada("Intäkter stöd till studieorganisationer, kr/inv", match=0, kommunkod = "Alla")
+  df_intakt_s <- df_intakt_s %>% filter(year >= 2010, !is.na(value))
   
-  df_nettokostnad <- rbind(df_nettokostnad,df_nettokostnad_k,df_nettokostnad_ak,df_nettokostnad_b,
-                           df_nettokostnad_mk,df_nettokostnad_s)
+  df_nettokostnad <- rbind(df_nettokostnad,df_intakt_k,df_intakt_ak,df_intakt_b,
+                           df_intakt_mk,df_intakt_s)
   
   df_nettokostnad <- df_nettokostnad %>% filter(municipality %in% c("Riket",kommuner),
                                                 kpi != "N85014")
@@ -95,6 +96,7 @@ func_df_Kostnad_intakt <- function(){ # kostnad kulturverksamhet, kr/inv
   write.csv(df_nettokostnad, "Data/df_Kostnad_intakt.csv", row.names = F)
   print('Nedladdning av "df_Kostnad_intakt.csv" har genomförts')
 }
+
 
 
 

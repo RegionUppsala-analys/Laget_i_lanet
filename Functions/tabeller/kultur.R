@@ -158,7 +158,7 @@ kostnad_intakt <- function(){
       
       andel_intakt = colDef(
         minWidth = 80,
-        name = "Intäkt",
+        name = "Andel Intäkt",
         header = function(value) {
           tagList(
             tags$div("Andel (%)", style = "font-size: 18px; font-weight: 600;"),

@@ -436,7 +436,7 @@ andel_storlek_kom_firm <- function(){
   
 }
 
-andel_bransch_kom_frim <- function(){
+andel_bransch_kom_firm <- function(){
   # Läser in data
   df <- read.csv("Data/df_kulturkategori_firm_per_kom.csv")
   
