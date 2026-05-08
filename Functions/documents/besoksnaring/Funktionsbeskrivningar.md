@@ -5,8 +5,7 @@
 
 ## Översikt
 
-Projektet består av fyra skript som tillsammans förbereder referensfiler, hämtar statistik och skapar visualiseringar för en rapport om turism och besöksnäring i Uppsala län. Data hämtas från SCB, Tillväxtverkets API, Kolada och Visit Sweden, samt från interna datafiler (Regdatabasen/MONADATA).
-
+Projektet består av fyra skript som tillsammans förbereder referensfiler, hämtar statistik och skapar visualiseringar för en rapport om turism och besöksnäring i Uppsala län. Data hämtas från SCB, Tillväxtverkets API, Kolada och Visit Sweden, samt från interna datafiler (databasen/DATA).
 | Skript | Syfte |
 |---|---|
 | `skapa_ssyk_fil.R` | Skapar en referensfil med turismrelaterade SSYK-yrken |
@@ -114,8 +113,8 @@ En hjälpfunktion `print_pxwebv2(tabell)` konstruerar URL:er till SCB API v2 och
 
 ## Geografiska filer
 
-### Regdatabasen (ZIP)
-En ZIP-fil från Regdatabasen packas upp direkt vid körning till `Data/MyFiles/`. Innehållet är interna MONADATA-filer som används av diagramfunktionerna i `create_save_plots.R`.
+### Databasen (ZIP)
+En ZIP-fil från databas packas upp direkt vid körning till `Data/MyFiles/`. Innehållet är interna DATA-filer som används av diagramfunktionerna i `create_save_plots.R`.
 
 ```r
 unzip("Data/MyFiles.zip", exdir = "Data/MyFiles")
@@ -245,7 +244,7 @@ Hämtar logiintäkter, disponibla bäddar/rum, svenska och utländska ankomster 
 
 Läser in lokalt sparad data och skapar diagram och interaktiva kartor för turismrapporten. Statiska diagram sparas i `Figurer/` (skapas automatiskt) som SVG och PNG (96 dpi). Interaktiva objekt returneras för inbäddning i rapport.
 
-Skriptet är uppdelat i fyra tematiska block: **SCB-befolkningsdata**, **Visit Sweden**, **Tillväxtverkets inkvarteringsstatistik** och **MONADATA** (interna Regdatabasfiler, ej publika).
+Skriptet är uppdelat i fyra tematiska block: **SCB-befolkningsdata**, **Visit Sweden**, **Tillväxtverkets inkvarteringsstatistik** och **INTERNDATA** (interna databasfiler, ej publika).
 
 ---
 
@@ -373,11 +372,11 @@ Skapar ett stapeldiagram med antal fritidshus per 1 000 invånare per kommun i U
 
 ---
 
-## MONADATA – besöksnäringsarbetare
+## Besöksnäringsarbetare
 
-> **OBS!** Dessa funktioner använder data från Regdatabasen som laddas upp manuellt som ZIP-fil och packas upp till `Data/MyFiles/`. Filerna är **inte publika** och laddas inte ned automatiskt.
+> **OBS!** Dessa funktioner använder data från databasen som laddas upp manuellt som ZIP-fil och packas upp till `Data/MyFiles/`. Filerna är **inte publika** och laddas inte ned automatiskt.
 
-Alla MONADATA-diagram avser dagbefolkning (20–64 år) med yrken klassificerade som besöksnäring via SSYK 2012-kodfilen (`Script/nyckel_yrke.txt`), för år 2023 om inget annat anges.
+Alla diagram avser dagbefolkning (20–64 år) med yrken klassificerade som besöksnäring via SSYK 2012-kodfilen (`Script/nyckel_yrke.txt`), för år 2023 om inget annat anges.
 
 ---
 
@@ -455,7 +454,7 @@ Projektmapp/
 │   ├── load_save_data.R
 │   └── create_save_plots.R
 ├── Data/
-│   ├── MyFiles.zip                    # Interna Regdatabasfiler (laddas upp manuellt)
+│   ├── MyFiles.zip                    # Interna filer (laddas upp manuellt)
 │   ├── MyFiles/                       # Packas upp vid körning
 │   ├── SNI_Koder_OlikaUppdelningar.xlsx  # Lokal SNI-fil (laddas upp manuellt)
 │   ├── Kommun_Sweref99TM/             # Kommungränser (Shape-fil, laddas ned)
@@ -477,7 +476,7 @@ Projektmapp/
 | Kolada | Fritidshus per 1 000 invånare |
 | Visit Sweden (Linked Data API) | Turistattraktioner i Uppsala |
 | GitHub (RegionUppsala-analys) | DeSO-geografifunktion |
-| Regdatabasen / MONADATA | Besöksnäringsarbetare (ej publik, manuell uppladdning) |
+| Databasen / DATA | Besöksnäringsarbetare (ej publik, manuell uppladdning) |
 
 ---
 
