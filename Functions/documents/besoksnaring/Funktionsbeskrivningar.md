@@ -113,16 +113,6 @@ En hjälpfunktion `print_pxwebv2(tabell)` konstruerar URL:er till SCB API v2 och
 
 ## Geografiska filer
 
-### Databasen (ZIP)
-En ZIP-fil från databas packas upp direkt vid körning till `Data/MyFiles/`. Innehållet är interna DATA-filer som används av diagramfunktionerna i `create_save_plots.R`.
-
-```r
-unzip("Data/MyFiles.zip", exdir = "Data/MyFiles")
-```
-
-> **OBS!** `Data/MyFiles.zip` måste finnas lokalt innan skriptet körs. Filen laddas inte ned automatiskt.
-
----
 
 ### `func_deso()`
 Hämtar DeSO-geografifiler från SCB:s geodatatjänst via ett externt skript på GitHub. Laddar bara ned filer som inte redan finns.
@@ -372,69 +362,21 @@ Skapar ett stapeldiagram med antal fritidshus per 1 000 invånare per kommun i U
 
 ---
 
-## Besöksnäringsarbetare
+## Ej offentlig funktionalitet
 
-> **OBS!** Dessa funktioner använder data från databasen som laddas upp manuellt som ZIP-fil och packas upp till `Data/MyFiles/`. Filerna är **inte publika** och laddas inte ned automatiskt.
+Projektet innehåller ytterligare analys- och visualiseringsfunktioner som inte ingår i den publika dokumentationen.
 
-Alla diagram avser dagbefolkning (20–64 år) med yrken klassificerade som besöksnäring via SSYK 2012-kodfilen (`Script/nyckel_yrke.txt`), för år 2023 om inget annat anges.
+Dessa komponenter behandlar känsliga eller sekretessreglerade data och har därför exkluderats från det öppna repositoriet. De omfattar bland annat:
 
----
+- ej offentliga databaser
 
-### `hist_utveckling()`
-Indexdiagram (basår 2014 = 100) som visar hur antalet besöksnäringsarbetare per dagbefolkning har förändrats i alla Sveriges län. Uppsala markeras i mörkrosa, lä med lägst och högst index i senaste år highlightas med grå etiketter, övriga lä visas som grå linjer.
+De interna funktionerna följer samma övergripande arkitektur som övriga diagramfunktioner:
+- datainläsning
+- ggplot-/plotly-baserad visualisering
+- export till SVG/PNG
 
-- **Indata:** `Data/Myfiles/data_utveckling_turism_lan.csv`
-- **Sparas som:** `Figurer/turismindex_lan.svg/.png`
+Publik dokumentation beskriver endast de delar som kan delas öppet utan risk för röjande av känslig information.
 
----
-
-### `kategorier()`
-Horisontellt stapeldiagram som visar antal besöksnäringsarbetare per yrkeskategori (t.ex. Mat & dryck, Boende, Transport) i Uppsala län.
-
-- **Indata:** `Data/Myfiles/data_kategorier_turism_lan.csv`
-- **Sparas som:** `Figurer/turismantal_per_kategori.svg/.png`
-
----
-
-### `konsfordelning()`
-Stapeldiagram som visar könsfördelningen (Kvinnor/Män) per yrkeskategori. En ljusgrå ruta markerar det jämställda intervallet (40–60%). Sorteras efter andelen kvinnor.
-
-- **Indata:** `Data/Myfiles/data_konsfordelning_turism_lan.csv`
-- **Sparas som:** `Figurer/konsfordelning_turism.svg/.png`
-
----
-
-### `fodelseland()`
-Stapeldiagram som visar födelseregionsfördelningen (inrikes/utrikes född) per yrkeskategori bland besöksnäringsarbetare. Sorteras efter andelen inrikes födda.
-
-- **Indata:** `Data/Myfiles/data_fodelseland_turism_lan.csv`
-- **Sparas som:** `Figurer/fodelseland_turism.svg/.png`
-
----
-
-### `alder()`
-Stapeldiagram som visar åldersfördelningen (20–34, 35–49, 50–64 år) per yrkeskategori. Sorteras efter andelen 50–64-åringar. Procentetiketter visas bara om andelen överstiger 15%.
-
-- **Indata:** `Data/Myfiles/data_alder_turism_lan.csv`
-- **Sparas som:** `Figurer/alder_turism.svg/.png`
-
----
-
-### `inkomst()`
-Horisontellt stapeldiagram med medianinkomst (tkr) per yrkeskategori bland besöksnäringsarbetare. Värden visas som etiketter inuti staplarna.
-
-- **Indata:** `Data/Myfiles/data_inkomst_turism_lan.csv`
-- **Sparas som:** `Figurer/inkomst_turism.svg/.png`
-
----
-
-### `kommun_fordelning()`
-Stapeldiagram som visar andelen och antalet besöksnäringsarbetare per kommun i Uppsala (+ länet totalt) för senaste år. Hämtar kommunnamn dynamiskt via SCB:s API.
-
-- **Indata:** `Data/Myfiles/data_utveckling_turism_kommun.csv`
-- **Sparas som:** `Figurer/kommun_turism.svg/.png`
-
----
 
 ---
 
@@ -454,8 +396,6 @@ Projektmapp/
 │   ├── load_save_data.R
 │   └── create_save_plots.R
 ├── Data/
-│   ├── MyFiles.zip                    # Interna filer (laddas upp manuellt)
-│   ├── MyFiles/                       # Packas upp vid körning
 │   ├── SNI_Koder_OlikaUppdelningar.xlsx  # Lokal SNI-fil (laddas upp manuellt)
 │   ├── Kommun_Sweref99TM/             # Kommungränser (Shape-fil, laddas ned)
 │   ├── LanSweref99TM/                 # Länsgränser (Shape-fil, laddas ned)
