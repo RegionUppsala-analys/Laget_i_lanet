@@ -99,7 +99,6 @@ På så vis ser du exakt vilket steg som misslyckas och vilket värde varje vari
 **4. Vanliga orsaker** - **Paket** – en äldre eller nyare version av ett paket kan ha förändrat hur en funktion beter sig.
 Kontrollera paketversioner (se avsnittet *Paket* nedan).
 - **URL:er** – API:er och nedladdningslänkar kan ändras mellan år.
-Sök på "Boverket" i `load_save_data` och uppdatera url:en vid behov.
 - **Saknade filer** – kontrollera att alla manuellt nedladdade filer finns på rätt plats och har rätt namn.
 
 ### Steg 1
