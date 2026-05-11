@@ -2,7 +2,7 @@
 
 deso_upplat <- function(){
   # Läser in data
-  df_deso <- read.csv('Data/df_deso.csv')
+  df_deso <- read.csv('Data/df_deso.csv') %>% filter(år == max(år))
   
   suppressMessages({
     suppressWarnings({
