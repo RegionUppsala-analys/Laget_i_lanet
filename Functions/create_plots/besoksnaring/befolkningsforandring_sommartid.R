@@ -332,7 +332,7 @@ befolkning_flyttnetto <- function(){
     labs(
       x = "Befolkningsförändring (tusental personer)",
       y = "Inrikes flyttnetto per tusen invånare",
-      title = "Julibefolkning och flytnetto år 2022",
+      title = "Julibefolkning och flyttnetto år 2022",
       caption = "Källa: SCB"
     ) +
     theme(plot.caption = element_text(hjust=0),
@@ -358,7 +358,7 @@ befolkning_flyttnetto <- function(){
     labs(
       x = "Befolkningsförändring (tusental personer)",
       y = "Inrikes flyttnetto per tusen invånare",
-      title = "Midsommarbefolkning och flytnetto år 2022",
+      title = "Midsommarbefolkning och flyttnetto år 2022",
       caption = "Källa: SCB"
     )+
     theme(plot.caption = element_text(hjust=0),
