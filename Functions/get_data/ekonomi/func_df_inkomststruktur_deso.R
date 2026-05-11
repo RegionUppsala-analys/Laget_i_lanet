@@ -1,7 +1,7 @@
 ## Inkomststruktur nettoinkomst efter region och kön. År 2011 - 2024
 # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__HE__HE0110__HE0110I/Tab2InkDesoRegso/
 
-func_df_inkomststruktur - function(){
+func_df_inkomststruktur <- function(){
   
   url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0110/HE0110I/Tab2InkDesoRegso'
   

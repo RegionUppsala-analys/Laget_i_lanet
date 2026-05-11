@@ -79,18 +79,11 @@ Hämtar folkmängd uppdelad på födelseregion (inrikes/utrikes), ålder och kö
 
 ---
 
-### `func_foddadoda()`
-Hämtar antal födda och döda per region, kön och år, samt nettotal.
+### `func_foddadoda_inut_flytt()`
+Hämtar antal födda och döda per region, kön och år, samt nettotal. Hämtar in- och utflyttning per region, kön och födelseregion.
 
 - **SCB-tabell:** BE0101 (födelseöverskott)
 - **Sparas som:** `Data/df_foddadoda.csv`
-
----
-
-### `func_inut_flytt()`
-Hämtar in- och utflyttning per region, kön och födelseregion.
-
-- **SCB-tabell:** Befolkningsrörelse
 - **Sparas som:** `Data/df_inut_flytt.csv`
 
 ---
@@ -245,8 +238,6 @@ Hämtar andel av befolkningen i olika inkomstklasser per DeSO-område, inkomstty
 
 ### `func_df_inkomststruktur()`
 Hämtar inkomststruktur (nettoinkomst per inkomstkomponent) per DeSO-område och kön.
-
-> **OBS!** Innehåller ett syntaxfel i funktionsdefinitionen (`- function{` istället för `<- function(){`) som behöver korrigeras.
 
 - **SCB-tabell:** Tab2InkDesoRegso (HE0110I)
 - **Sparas som:** `Data/df_inkomststruktur.gpkg`
@@ -898,3 +889,4 @@ Projektmapp/
 | `socioindex_pca.R` | Hårdkodade globala variabler i toppen åsidosätts av `settings.R` | Ta bort eller kommentera bort de hårdkodade värdena |
 | `UVAS.R` | `senaste_ar` måste uppdateras manuellt vid ny data | Sätt korrekt år vid körning |
 | `load_save_data.R` | `func_soc_tillit()` anropas aldrig i skriptet | Lägg till anropet `func_soc_tillit()` vid behov |
+|Lägg in mer SFI-data|  Det är intressant mest intressant att kolla på andelar och hur många som klarar/ej klarar utbildningen. 
