@@ -37,8 +37,10 @@ func_skogsareal <- function(){
   
   meta <- pxweb_get(url)
   
+  uppsala_kom <- which(str_to_sentence(gsub("^\\d+\\s+", "", meta[["variables"]][[1]][["valueTexts"]])) %in% kommuner)
+  
   pxweb_query_list <- list(
-    "Kommun" = as.character(26:(26+7)), # Uppsala läns kommuner
+    "Kommun" = as.character(uppsala_kom), # Uppsala läns kommuner
     'Variabel' = '*',
     'År' = '*'
   )

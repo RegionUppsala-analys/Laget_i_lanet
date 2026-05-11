@@ -34,7 +34,7 @@ source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/mai
 
 ############## Natur ############
 # Skyddad natur, andel (%)
-func_df_avstand_natur <- function(){
+func_df_skyddad_natur <- function(){
   df_skyddad_natur <- search_and_fetch_kolada("Skyddad natur ")
   
   df_skyddad_natur<- df_skyddad_natur %>%  filter(title %in% c("Skyddad natur land, andel (%)" ,

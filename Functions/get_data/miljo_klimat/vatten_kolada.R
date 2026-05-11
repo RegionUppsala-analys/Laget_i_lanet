@@ -3,7 +3,7 @@ source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/mai
 
 ########### Vatten kolada ###########
 
-func_vatten_kolada <- functin(){
+func_vatten_kolada <- function(){
   { # Avgift för vatten och avlopp inkl. moms för typfastighet enligt Nils Holgersson-modellen, kr/kvm
     df_avgift <- search_and_fetch_kolada("Avgift för vatten och avlopp inkl. moms för typfastighet enligt Nils Holgersson-modellen, kr/kvm", match=0)
     df_avgift <- df_avgift %>% filter(year >= 2010)
