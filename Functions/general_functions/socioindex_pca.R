@@ -525,7 +525,7 @@ pca_func <- function(){
   #  print(loading_matrix)
   
   # Medelvärdesvektor över år
-  mean_vector <- rowMeans(loading_matrix)
+  mean_vector <- rowMeans(abs(loading_matrix))
   
   # print('Medelvärdesvektor över åren')
   #  print(mean_vector)
@@ -721,13 +721,18 @@ socioindex_karta_tid <- function(){
         deso_joined <- st_read("Data/DeSO_2018.gpkg", layer = "DeSO_2018", quiet = TRUE) # we keep only Uppsala län
       })
     })
-  }  
+  }
   
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"),
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  
+  deso_joined <- deso_joined %>% left_join(komnamn, by="kommunkod" )
   
   laskoden <- str_split(lanskod,"")[[1]][2]
   
-  df <- df %>% left_join(deso_joined %>% select(desokod,sp_geometry), by="desokod")%>%
+  df <- df %>% left_join(deso_joined %>% select(desokod,sp_geometry, kommunnamn), by="desokod")%>%
     st_as_sf() %>% filter(lanskod == !!laskoden)
+  
   
   # popup och label
   df_sf <- df %>%
@@ -835,6 +840,12 @@ scatter_socioindex_tid <- function() {
       deso_sf2 <- st_read("Data/df_deso_fodelse_index_tid.gpkg", quiet = TRUE)
     })
   })
+  
+  
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"),
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  
+  deso_sf2 <- deso_sf2 %>% left_join(komnamn, by="kommunkod" )
   
   laskoden <- str_split(lanskod,"")[[1]][2]
   
@@ -1003,6 +1014,7 @@ table_switches <- function(){
       deso_joined <- st_read("Data/DeSO_2025.gpkg", layer = "DeSO_2025", quiet = TRUE)  # we keep only Uppsala län
     })
   })
+  
   
   
   laskoden <- str_split(lanskod,"")[[1]][2]
