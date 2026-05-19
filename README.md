@@ -175,6 +175,136 @@ quarto render
 
 Kopiera därefter innehållet i \_site och publicera till webb-repot.
 
+
+## Referenser och BibTeX
+
+Rapporterna kan använda referenser via BibTeX (`.bib`) för att hantera källor på ett strukturerat och reproducerbart sätt i Quarto.
+
+En BibTeX-fil innehåller metadata om referenser, exempelvis rapporter, artiklar, webbsidor och publikationer. Dessa kan sedan citeras direkt i `.qmd`-filer.
+
+### Struktur
+
+Vanligtvis används en fil som exempelvis:
+
+```text
+references.bib
+```
+Den kopplas in i rapportens YAML-header:
+
+```yaml
+---
+title: "Rapporttitel"
+bibliography: references.bib
+---
+```
+
+Referenser citeras sedan i texten med:
+
+```markdown
+@pts2025metodbilaga
+```
+
+eller flera samtidigt:
+
+```markdown
+@scb2024; @socialstyrelsen2023
+```
+
+Vid rendering skapas referenslista automatiskt längst ned i rapporten.
+
+------------------------------------------------------------------------
+
+### Skapa BibTeX-referenser
+
+Det finns flera sätt att skapa BibTeX-poster.
+
+#### 1. Manuellt
+
+En referens kan skrivas direkt i `.bib`-filen:
+
+```bibtex
+@techreport{pts2025metodbilaga,
+  author      = {{Post- och telestyrelsen}},
+  title       = {Metodbilaga -- Mobiltäcknings- och bredbandskartläggning 2025},
+  year        = {2025},
+  institution = {PTS},
+  url         = {https://statistik.pts.se/media/2aqd2qv0/mtbbk_2025_metodbilaga_v1-0.pdf}
+}
+```
+
+Nyckeln (`pts2025metodbilaga`) används sedan vid citering i `.qmd`.
+
+------------------------------------------------------------------------
+
+#### 2. Google Scholar
+
+Google Scholar kan exportera referenser direkt till BibTeX-format.
+
+Tillvägagångssätt:
+
+1. Sök upp publikationen i Google Scholar
+2. Klicka på citattecknet (`"`)
+3. Välj **BibTeX**
+4. Kopiera innehållet till projektets `.bib`-fil
+
+------------------------------------------------------------------------
+
+#### 3. AI-generering
+
+AI kan användas för att generera BibTeX-poster från:
+
+- DOI
+- URL
+- titel
+- rapportnamn
+- PDF-filer
+
+Exempel:
+
+```text
+Skapa en BibTeX-referens för denna rapport:
+https://...
+```
+
+Kontrollera alltid att:
+
+- författare är korrekt formaterade
+- årtal stämmer
+- URL fungerar
+- citation key är tydlig och unik
+
+AI-genererade referenser kan innehålla fel och bör verifieras innan publicering.
+
+------------------------------------------------------------------------
+
+### Rekommendationer
+
+-   Använd tydliga citation keys, exempelvis:
+
+```text
+scb2024befolkning
+folkhalsomyndigheten2023
+pts2025metodbilaga
+```
+
+-   Undvik mellanslag och specialtecken i citation keys
+-   Försök använda samma referensformat mellan rapporter
+-   Spara alla referenser centralt i projektet för reproducerbarhet
+
+------------------------------------------------------------------------
+
+### Exempel i Quarto
+
+I `.qmd`:
+
+
+Täckningsdefinitionerna följer PTS metodbeskrivning @pts2025metodbilaga.
+
+
+Vid rendering genereras referenslistan automatiskt.
+
+------------------------------------------------------------------------
+
 ## Förbättringsarbete
 
 -   Alla funktioner ska tas in via source() → bättre versionshantering och minskad duplicering
