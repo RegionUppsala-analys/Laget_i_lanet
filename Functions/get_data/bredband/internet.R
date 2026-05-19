@@ -51,8 +51,12 @@ func_tackningsdata <- function(){
   download.file(url_mobiltackning, dest_mobiltackning, mode = "wb")
   
   print('Nedladdning av "mobiltackning.xlsx" har genomförts')
+  ####################
+  ## Här kan länkar ändras, PTS släpper tydligen nya för varje år!
   # Teknik 
-  url_teknik <- 'https://statistik.pts.se/media/b2rhdc1g/tabellbilaga-teknik-1-1.xlsx'
+  # gammalt url # 'https://statistik.pts.se/media/b2rhdc1g/tabellbilaga-teknik-1-1.xlsx'
+  url_teknik <- 'https://statistik.pts.se/media/wxnfcs3j/mtbbk_25-17220_tabellbilaga_teknik_v1-0.xlsx'
+  
   
   # Sökvägar där filerna ska sparas
   teknik <- file.path("Data", "teknik.xlsx")
@@ -61,5 +65,22 @@ func_tackningsdata <- function(){
   download.file(url_teknik, teknik, mode = "wb")
   
   print('Nedladdning av "teknik.xlsx" har genomförts')
+  
+}
+
+
+tackningsdata_nyttar <- function(){
+  
+  # Direktlänkar till Excel-filerna för mobiltäckning
+  url_mobiltackning <- "https://statistik.pts.se/media/jvynqf2h/mtbbk_25-17220_tabellbilaga_mobiltäckning_v1-0.xlsx"
+  
+  # Sökvägar där filerna ska sparas
+  dest_mobiltackning <- file.path("Data", "mobiltackning_nytt.xlsx")
+  
+  # Ladda ned filerna
+  download.file(url_mobiltackning, dest_mobiltackning, mode = "wb")
+  
+  print('Nedladdning av "mobiltackning_nytt.xlsx" har genomförts')
+  
   
 }

@@ -309,7 +309,13 @@ teknik <- function(){
   # Läser in och filtrerar data
   df <- read_excel("Data/teknik.xlsx", sheet=4) %>% filter(Kommunnamn %in% kommuner,Årtal == max(Årtal),
                                                            Område =='total') %>% 
-    select(!c(Bas  ,   `Aggregerat på`, Område, Lännamn))
+    select(!c(Bas  ,   `Aggregerat på`, Område, Lännamn,`Antal hushåll i bostadsbyggnad`,
+              `Antal hushåll i kombinationsbyggnad` ))
+  
+  
+  # allt till samma format
+  df <- df %>%
+    mutate(across(-Kommunnamn, as.numeric))
   
   # Gör till long för att få variabler i en kolumn
   df_long <- df %>%
@@ -353,3 +359,4 @@ teknik <- function(){
   
   
 }
+

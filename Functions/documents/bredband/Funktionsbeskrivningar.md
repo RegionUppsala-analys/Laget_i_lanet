@@ -96,6 +96,17 @@ Laddar ned två Excel-filer direkt från PTS:s webbplats:
 
 ---
 
+### Ny nedladdningsfunktion
+ 
+### `tackningsdata_nyttar()`
+ 
+Laddar ned PTS nya Excel-fil för mobiltäckning direkt från PTS statistikportal och sparar lokalt.
+ 
+- **Källa:** `statistik.pts.se` (direktlänk till Excel-fil)
+- **Sparas som:** `Data/mobiltackning_nytt.xlsx`
+> **OBS!** URL:en är hårdkodad och innehåller ett versionsspecifikt filnamn (`v1-0`). Vid ny publicering från PTS behöver länken uppdateras manuellt. Jämför med `func_tackningsdata()` som laddar ned det gamla formatet.
+
+
 ---
 
 # `create_save_plots.R` – Diagramskapande
@@ -184,6 +195,49 @@ Läser in operatörsspecifik mobiltäckningsdata (flikar 4–7 i `mobiltackning.
 
 ---
 
+## Nya tabellsfunktioner (nytt PTS-format)
+ 
+Dessa funktioner läser från `Data/mobiltackning_nytt.xlsx` som laddas ned av `tackningsdata_nyttar()`.
+ 
+### `mobilt_agg_tbl_nyttar()`
+ 
+Bearbetar flik 3 i det nya Excel-formatet (aggregerat – alla operatörer). Det nya formatet har kolumnnamn direkt i rad 1 (efter `skip = 1`), vilket förenklar inläsningen jämfört med det gamla formatet.
+ 
+**Skillnader mot `mobilt_agg_tbl()`:**
+ 
+| Aspekt | Gammalt format | Nytt format |
+|---|---|---|
+| Rubrikrader | 2 rader (täckningstyp + år) | 1 rad direkt |
+| Kolumnnamn | Kombineras manuellt | Läses in direkt med `col_names = TRUE` |
+| Utdataformat | Wide (år som kolumner) | Long (en rad per täckningstyp) |
+| Årshantering | Åren som separata kolumner | Inget separat årsbegrepp i det nya formatet |
+ 
+
+- **Indata:** `Data/mobiltackning_nytt.xlsx`, flik 3
+- **Sparas som:** `Data/mobilt_long_nytt.rds`
+> **OBS!** Utdataformatet är **long** (inte wide som i det gamla formatet). Quarto-tabellen som konsumerar denna RDS-fil behöver anpassas om den tidigare läste `mobilt_wide.rds`.
+ 
+---
+ 
+### `mobilt_tbl_ny()`
+ 
+Bearbetar flik 2 i det nya Excel-formatet, som innehåller alla operatörer i en och samma flik (till skillnad från det gamla formatet med en flik per operatör).
+ 
+**Skillnader mot `mobilt_tbl()`:**
+ 
+| Aspekt | Gammalt format | Nytt format |
+|---|---|---|
+| Operatörsflikar | En flik per operatör (4–7) | Alla operatörer i flik 2 |
+| Operatörer | Telenor, Tele2, Telia, Tre | Alla operatörer, Telenor, Tele2, TeliaCompany, Tre |
+| Senasteår-logik | Dynamisk via `grep` | Inte nödvändig (inget årsbegrepp i kolumnnamnen) |
+| Sammanslagning | `reduce(full_join)` | `pivot_wider` på operatörskolumn |
+ 
+- **Indata:** `Data/mobiltackning_nytt.xlsx`, flik 2
+- **Sparas som:** `Data/mobilt_wide_op_ny.rds`
+---
+ 
+
+
 ---
 
 ## Mappstruktur
@@ -204,7 +258,9 @@ Projektmapp/
 │   ├── mobiltackning.xlsx        # Laddas ned av func_tackningsdata()
 │   ├── teknik.xlsx               # Laddas ned av func_tackningsdata()
 │   ├── mobilt_wide.rds           # Genereras av create_tables.R
-│   └── mobilt_wide_op.rds        # Genereras av create_tables.R
+│   ├── mobilt_wide_op.rds        # Genereras av create_tables.R
+|   └── mobiltackning_nytt.xlsx   # tackningsdata_nyttar()
+|   
 └── Figurer/                      # Skapas automatiskt – SVG och PNG
 ```
 

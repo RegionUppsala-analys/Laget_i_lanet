@@ -1,23 +1,17 @@
-
 # Läget i länet
 
 Detta dokument beskriver uppbyggnad, användning och framtida utveckling av rapportserien *Läget i länet*.
 
-För att påbörja arbetet behöver du tillgång till GitHub-kontot **RegionUppsala-analys**.
-Där finns kod till samtliga rapporter, mallar och övriga resurser.
+För att påbörja arbetet behöver du tillgång till GitHub-kontot **RegionUppsala-analys**. Där finns kod till samtliga rapporter, mallar och övriga resurser.
 
-Rapporterna skapas genom rendering av `.qmd`-filer till HTML i R (Quarto).
-För att säkerställa en enhetlig struktur används en gemensam mall som kan laddas ned från:\
+Rapporterna skapas genom rendering av `.qmd`-filer till HTML i R (Quarto). För att säkerställa en enhetlig struktur används en gemensam mall som kan laddas ned från:\
 [Mall](https://github.com/RegionUppsala-analys/Laget_i_lanet_Mall)
 
 Vid skapande av nya rapporter kan strukturen och inledande kod enkelt kopieras från tidigare rapporter, eftersom dessa följer samma uppbyggnad.
 
-För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI(Claude) för att få allt i samma struktur.
-Alla funktioner tillhörande en rapport laddas ej upp här, detta beror på att de behandlar känslig information och hittas i enskilt repo för rapporten.
-Data ska aldrig laddas upp.
+För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i mappen Functions/documents, detta är skapat med AI(Claude) för att få allt i samma struktur. Alla funktioner tillhörande en rapport laddas ej upp här, detta beror på att de behandlar känslig information och hittas i enskilt repo för rapporten. Data ska aldrig laddas upp.
 
-Om nya bilder laddas ned från regionens mediabank så ska de läggas in och pushas upp till detta repo!
-För tillfället måste mediabanken laddas ned innan rendering av rapporter, att ha dem lokalt kan ge fördelar vid rendering.
+Om nya bilder laddas ned från regionens mediabank så ska de läggas in och pushas upp till detta repo! För tillfället måste mediabanken laddas ned innan rendering av rapporter, att ha dem lokalt kan ge fördelar vid rendering.
 
 ------------------------------------------------------------------------
 
@@ -32,9 +26,7 @@ För tillfället måste mediabanken laddas ned innan rendering av rapporter, att
     Installerar (vid behov) och laddar alla paket som används i rapporten.
 
 -   **load_save_data.R**\
-    Hanterar inhämtning av data.
-    Större delen av dataladdningen sker här, oftast utanför funktioner.
-    När skriptet körs hämtas aktuell data till rapporten.
+    Hanterar inhämtning av data. Större delen av dataladdningen sker här, oftast utanför funktioner. När skriptet körs hämtas aktuell data till rapporten.
 
     -   create_save_ploots.R I detta skript så ligger alla funktioner som skapar plots till rapporten, funktionerna sparar plots både som svg och png så att användaren ska få välja format vid nedladdning. Svg används för rendering. Funktionerna kan också vara interaktiva plots i plotly eller leaflet som inte sparar plots i sig utan ska läggas in och köras i qmd-filen vid rendering.
 
@@ -46,30 +38,25 @@ För tillfället måste mediabanken laddas ned innan rendering av rapporter, att
     -   Interaktiva grafer (t.ex. med Plotly eller Leaflet) skapas här men körs i `.qmd`-filen och sparas inte som filer.
 
 -   **create_tables.R**\
-    Skapar tabeller, med eller utan interaktivitet.
-    Vissa tabeller kan även definieras direkt i `.qmd`.
+    Skapar tabeller, med eller utan interaktivitet. Vissa tabeller kan även definieras direkt i `.qmd`.
 
 -   **run_all_functions.R**\
     Kör dataladdning och samtliga plotfunktioner för att generera och spara figurer.\
     Alla funktioner som skapar och sparar grafer ska inkluderas här.\
-    Detta är huvudskriptet för att uppdatera rapporter.
-    Läs noggrant igenom eventuella kommentarer!
+    Detta är huvudskriptet för att uppdatera rapporter. Läs noggrant igenom eventuella kommentarer!
 
 -   **övriga funktioner** Utöver dessa så kan det skilja sig mellan vilka filer som tillhör en rapport, vissa har filer som skrapar data från olika hemsidor eller gör speciella beräkningar etc. ---
 
 ### Data
 
-Här lagras data.
-Det mesta sparas automatiskt via skript, men vissa dataset kräver manuell nedladdning.\
+Här lagras data. Det mesta sparas automatiskt via skript, men vissa dataset kräver manuell nedladdning.\
 Detta beskrivs i respektive rapports README och kommenteras ofta i `run_all_functions.R`.
 
 ------------------------------------------------------------------------
 
 ### Figurer
 
-Alla genererade grafer sparas här.
-Mallen innehåller även statiska resurser, t.ex.
-regionens logotyp.
+Alla genererade grafer sparas här. Mallen innehåller även statiska resurser, t.ex. regionens logotyp.
 
 ------------------------------------------------------------------------
 
@@ -84,22 +71,15 @@ För närvarande ska hela innehållet i denna mapp kopieras till det separata Gi
 
 ### Felsökning
 
-Något fungerar inte?
-Följ dessa steg för att systematiskt hitta och lösa felet:
+Något fungerar inte? Följ dessa steg för att systematiskt hitta och lösa felet:
 
-**1. Hitta var felet uppstår** Läs felmeddelandet noga – det brukar ange vilket skript/funktion och vilken rad som krånglar.
-Leta upp den filen och funktionen.
+**1. Hitta var felet uppstår** Läs felmeddelandet noga – det brukar ange vilket skript/funktion och vilken rad som krånglar. Leta upp den filen och funktionen.
 
-**2. Hitta den senaste fungerande koden** Identifiera var i koden det senast fungerade som det skulle.
-Det är ett bra ställe att börja felsöka ifrån.
+**2. Hitta den senaste fungerande koden** Identifiera var i koden det senast fungerade som det skulle. Det är ett bra ställe att börja felsöka ifrån.
 
-**3. Kör koden rad för rad** Markera och kör varje rad manuellt (t.ex. med Ctrl+Enter i RStudio), från toppen av funktionen ned mot den rad som ger fel.
-På så vis ser du exakt vilket steg som misslyckas och vilket värde varje variabel har längs vägen.
+**3. Kör koden rad för rad** Markera och kör varje rad manuellt (t.ex. med Ctrl+Enter i RStudio), från toppen av funktionen ned mot den rad som ger fel. På så vis ser du exakt vilket steg som misslyckas och vilket värde varje variabel har längs vägen.
 
-**4. Vanliga orsaker** - **Paket** – en äldre eller nyare version av ett paket kan ha förändrat hur en funktion beter sig.
-Kontrollera paketversioner (se avsnittet *Paket* nedan).
-- **URL:er** – API:er och nedladdningslänkar kan ändras mellan år.
-- **Saknade filer** – kontrollera att alla manuellt nedladdade filer finns på rätt plats och har rätt namn.
+**4. Vanliga orsaker** - **Paket** – en äldre eller nyare version av ett paket kan ha förändrat hur en funktion beter sig. Kontrollera paketversioner (se avsnittet *Paket* nedan). - **URL:er** – API:er och nedladdningslänkar kan ändras mellan år. - **Saknade filer** – kontrollera att alla manuellt nedladdade filer finns på rätt plats och har rätt namn.
 
 ### Steg 1
 
@@ -121,8 +101,7 @@ Klona repot för den aktuella rapporten och skapa ett R-projekt kopplat till det
 
 ### Steg 3
 
-Läs igenom README-filen noggrant.
-Den kan innehålla instruktioner om manuella steg (t.ex. datanedladdning).
+Läs igenom README-filen noggrant. Den kan innehålla instruktioner om manuella steg (t.ex. datanedladdning).
 
 ------------------------------------------------------------------------
 
@@ -140,8 +119,7 @@ Vid fel:
 -   Vid datafel: identifiera senaste datasteg och kör efterföljande kod manuellt.
 -   Vid fel i visualisering: kör funktionen rad för rad.
 
-Vid svåridentifierade problem kan AI användas genom att inspektera variabler stegvis (t.ex. print()), så att struktur och innehåll blir tydligt.
-Var försiktig med hanering av känsliga data och AI-användning här.
+Vid svåridentifierade problem kan AI användas genom att inspektera variabler stegvis (t.ex. print()), så att struktur och innehåll blir tydligt. Var försiktig med hanering av känsliga data och AI-användning här.
 
 ### Steg 5
 
@@ -151,8 +129,7 @@ Rendera rapporten via terminal:
 quarto render
 ```
 
-Fel kan uppstå, särskilt i interaktiva komponenter.
-Felsök genom att:
+Fel kan uppstå, särskilt i interaktiva komponenter. Felsök genom att:
 
 -   Köra berörd funktion manuellt
 -   Köra enskilda kodblock (chunks) i .qmd
@@ -175,7 +152,6 @@ quarto render
 
 Kopiera därefter innehållet i \_site och publicera till webb-repot.
 
-
 ## Referenser och BibTeX
 
 Rapporterna kan använda referenser via BibTeX (`.bib`) för att hantera källor på ett strukturerat och reproducerbart sätt i Quarto.
@@ -186,12 +162,13 @@ En BibTeX-fil innehåller metadata om referenser, exempelvis rapporter, artiklar
 
 Vanligtvis används en fil som exempelvis:
 
-```text
+``` text
 references.bib
 ```
+
 Den kopplas in i rapportens YAML-header:
 
-```yaml
+``` yaml
 ---
 title: "Rapporttitel"
 bibliography: references.bib
@@ -200,13 +177,13 @@ bibliography: references.bib
 
 Referenser citeras sedan i texten med:
 
-```markdown
+``` markdown
 @pts2025metodbilaga
 ```
 
 eller flera samtidigt:
 
-```markdown
+``` markdown
 @scb2024; @socialstyrelsen2023
 ```
 
@@ -222,7 +199,7 @@ Det finns flera sätt att skapa BibTeX-poster.
 
 En referens kan skrivas direkt i `.bib`-filen:
 
-```bibtex
+``` bibtex
 @techreport{pts2025metodbilaga,
   author      = {{Post- och telestyrelsen}},
   title       = {Metodbilaga -- Mobiltäcknings- och bredbandskartläggning 2025},
@@ -242,10 +219,10 @@ Google Scholar kan exportera referenser direkt till BibTeX-format.
 
 Tillvägagångssätt:
 
-1. Sök upp publikationen i Google Scholar
-2. Klicka på citattecknet (`"`)
-3. Välj **BibTeX**
-4. Kopiera innehållet till projektets `.bib`-fil
+1.  Sök upp publikationen i Google Scholar
+2.  Klicka på citattecknet (`"`)
+3.  Välj **BibTeX**
+4.  Kopiera innehållet till projektets `.bib`-fil
 
 ------------------------------------------------------------------------
 
@@ -253,25 +230,25 @@ Tillvägagångssätt:
 
 AI kan användas för att generera BibTeX-poster från:
 
-- DOI
-- URL
-- titel
-- rapportnamn
-- PDF-filer
+-   DOI
+-   URL
+-   titel
+-   rapportnamn
+-   PDF-filer
 
 Exempel:
 
-```text
+``` text
 Skapa en BibTeX-referens för denna rapport:
 https://...
 ```
 
 Kontrollera alltid att:
 
-- författare är korrekt formaterade
-- årtal stämmer
-- URL fungerar
-- citation key är tydlig och unik
+-   författare är korrekt formaterade
+-   årtal stämmer
+-   URL fungerar
+-   citation key är tydlig och unik
 
 AI-genererade referenser kan innehålla fel och bör verifieras innan publicering.
 
@@ -281,7 +258,7 @@ AI-genererade referenser kan innehålla fel och bör verifieras innan publicerin
 
 -   Använd tydliga citation keys, exempelvis:
 
-```text
+``` text
 scb2024befolkning
 folkhalsomyndigheten2023
 pts2025metodbilaga
@@ -297,9 +274,7 @@ pts2025metodbilaga
 
 I `.qmd`:
 
-
 Täckningsdefinitionerna följer PTS metodbeskrivning @pts2025metodbilaga.
-
 
 Vid rendering genereras referenslistan automatiskt.
 
@@ -325,8 +300,7 @@ files <- c(
 lapply(paste0(base_url, "/", files), source)
 ```
 
--   Centralisera mediabank (bilder) i GitHub → undvik lokala beroenden Mediabanken är uppladdad i detta repo, men ingen rapporter sourcar dem än!(
-    Kanske ej behövs)
+-   Centralisera mediabank (bilder) i GitHub → undvik lokala beroenden Mediabanken är uppladdad i detta repo, men ingen rapporter sourcar dem än!( Kanske ej behövs)
 
 -   Använd explicita paketanrop, t.ex.: ggplot2::ggplot() istället för ggplot() → minskar risk för konflikter mellan paket
 
