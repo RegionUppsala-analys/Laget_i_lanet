@@ -7,6 +7,12 @@ samband_inkomster <- function(){
     })
   })
   
+  # Lägger in kommunnamn
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  
+  df_inkomststruktur <- df_inkomststruktur %>% left_join(komnamn, by="kommunkod" )
+  
   # Filtrerar ut totalt
   df_gender <- df_inkomststruktur %>% filter(kön != "totalt")
   
@@ -193,6 +199,12 @@ samband_inkomster2 <- function(){
       df_inkomststruktur <- st_read("Data/df_inkomststruktur.gpkg", quiet = TRUE)
     })
   })
+  
+  # Lägger in kommunnamn
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  
+  df_inkomststruktur <- df_inkomststruktur %>% left_join(komnamn, by="kommunkod" )
   
   # Filtrerar ut totalt
   df_gender <- df_inkomststruktur %>% filter(kön != "totalt")

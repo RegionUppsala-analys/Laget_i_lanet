@@ -1,3 +1,19 @@
+## skapa tabeller
+
+# Ställer in settings paket mm
+{
+  source("Script/install_load_packages.R")
+  source("Script/settings.R")
+  install_and_load()
+  settings <- get_settings()
+  
+  kommunkod <- settings$kommunkod
+  kommuner <- settings$kommuner
+  kommun_colors <- settings$kommun_colors
+  
+  
+}
+
 
 ##### befolkning åldersklasser senaste året
 
@@ -121,8 +137,6 @@ tab_alder_class <- function(){
     )
   )
   
-  table <- table%>%
-    add_source("Källa: SCB")
   
   # kombinera buttons och tabell
   div(region_buttons, table)
@@ -147,6 +161,12 @@ tab_hushall <- function(){
   
   # Filtrerar ut total
   deso_sf <- deso_sf %>% filter(!grepl("totalt antal hushåll", hushållstyp, ignore.case = TRUE))
+  
+  # Lägger in kommunnamn
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  deso_sf <- deso_sf %>% left_join(komnamn, by="kommunkod" )
+  
   
   #  Räkna andelar per DeSO 
   andelar_deso <- deso_sf %>%
@@ -181,6 +201,12 @@ tab_hushall <- function(){
   deso_sf2 <- deso_sf2 %>% filter(!grepl("totalt antal hushåll", hushållstyp, ignore.case = TRUE))
   
   deso_sf2 <- deso_sf2 %>% left_join(regso %>% select(desokod, Område), by='desokod')
+  
+  # Lägger in kommunnamn
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  deso_sf2 <- deso_sf2 %>% left_join(komnamn, by="kommunkod" )
+  
   #  Räkna andelar per DeSO 
   andelar_deso2 <- deso_sf2 %>%
     group_by(desokod, år) %>%
@@ -299,6 +325,12 @@ tab_kon <- function(){
       deso_sf <- st_read("Data/df_deso_alder.gpkg", quiet = TRUE) 
     })
   })
+  
+  # Lägger in kommunnamn
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  
+  deso_sf <- deso_sf %>% left_join(komnamn, by="kommunkod" )
   
   regso <- read_excel('Data/koppling-deso2025-regso2025.xlsx',col_names = T, skip=3)
   
@@ -497,6 +529,7 @@ inkomst_summary <- function(){
   gt_table
   
 }
+
 
 
 

@@ -352,6 +352,13 @@ scatter_socioindex2 <- function() {
     })
   })
   
+  # Lägger in kommunnamn
+  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
+                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
+  
+  deso_sf <- deso_sf %>% left_join(komnamn, by="kommunkod" )
+  deso_sf2 <- deso_sf2 %>% left_join(komnamn, by="kommunkod" )
+  
   koppling <- read_excel("Data/koppling-deso2025-regso2025.xlsx", skip=2) %>% select(Kommunnamn, DeSO_2025,RegSO_2025 ) %>% 
     rename(desokod=DeSO_2025)
   
