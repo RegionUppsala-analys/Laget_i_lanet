@@ -58,6 +58,8 @@ Detta beskrivs i respektive rapports README och kommenteras ofta i `run_all_func
 
 Alla genererade grafer sparas här. Mallen innehåller även statiska resurser, t.ex. regionens logotyp.
 
+Om ett gammalt repo läses in med tillhörande figurer med data från interna databaser, så kan dessa användas om databasen ej uppdaterats. Detta tar då bort ett arbetsmoment och gör att jobbet för att kunna rendera den rapporten går snabbare. Koden för dessa grafer kommer då ej att kunna köras, vilket inte behövs, så länge grafen inte är interaktiv.
+
 ------------------------------------------------------------------------
 
 ### \_site
