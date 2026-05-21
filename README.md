@@ -13,6 +13,8 @@ För mer dokumentation om varje rapport så finns det funktionsbeskrivningar i m
 
 Om nya bilder laddas ned från regionens mediabank så ska de läggas in och pushas upp till detta repo! För tillfället måste mediabanken laddas ned innan rendering av rapporter, att ha dem lokalt kan ge fördelar vid rendering.
 
+Vid varje figur i qmd-filerna så har ALT-texter lagts in för att göra rapporterna mer tillgängliga, denna text ska skrivas till nya grafer som läggs in och kollas igenom vid uppdateringa v rapporter. 
+
 ------------------------------------------------------------------------
 
 ## Struktur
