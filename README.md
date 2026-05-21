@@ -123,7 +123,7 @@ Vid fel:
 -   Vid datafel: identifiera senaste datasteg och kör efterföljande kod manuellt.
 -   Vid fel i visualisering: kör funktionen rad för rad.
 
-Vid svåridentifierade problem kan AI användas genom att inspektera variabler stegvis (t.ex. print()), så att struktur och innehåll blir tydligt. Var försiktig med hanering av känsliga data och AI-användning här.
+Vid svåridentifierade problem kan AI användas genom att inspektera variabler stegvis (t.ex. print()), så att struktur och innehåll blir tydligt. Var försiktig med hantering av känsliga data och AI-användning här.
 
 ### Steg 5
 
