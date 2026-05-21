@@ -144,6 +144,7 @@ tab_alder_class <- function(){
   
 }
 
+
 ##### Tabell för de 10 Deso områden med högst andel hushåll som är ensamstående med barn
 tab_hushall <- function(){
   # Läser in data
@@ -161,6 +162,12 @@ tab_hushall <- function(){
   
   # Filtrerar ut total
   deso_sf <- deso_sf %>% filter(!grepl("totalt antal hushåll", hushållstyp, ignore.case = TRUE))
+  
+  # Tar bort dubbletter, fel från SCB?
+  deso_sf <- deso_sf %>%
+    group_by(desokod, hushållstyp) %>%
+    slice_max(Antal.hushåll, n = 1, with_ties = FALSE) %>%
+    ungroup()
   
   # Lägger in kommunnamn
   komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
@@ -187,6 +194,7 @@ tab_hushall <- function(){
       deso_sf2 <- st_read("Data/df_deso_hushall_2018.gpkg", quiet = TRUE) 
     })
   })
+  
   regso <- read_excel('Data/koppling-deso2018-regso2020.xlsx',col_names = T, skip=3)
   
   # Byter namn
@@ -206,6 +214,11 @@ tab_hushall <- function(){
   komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"), 
                         kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
   deso_sf2 <- deso_sf2 %>% left_join(komnamn, by="kommunkod" )
+  
+  deso_sf2 <- deso_sf2 %>%
+    group_by(desokod, hushållstyp, år) %>%
+    slice_max(Antal.hushåll, n = 1, with_ties = FALSE) %>%
+    ungroup()
   
   #  Räkna andelar per DeSO 
   andelar_deso2 <- deso_sf2 %>%
@@ -230,17 +243,17 @@ tab_hushall <- function(){
   
   
   # Dela upp data per år
-  df2014 <- table_ensam_medbarn_top %>% filter(år == "2014") %>% 
+  df10 <- table_ensam_medbarn_top %>% filter(år == as.character(new_y-10)) %>% 
     select(Område,desokod, Antal.hushåll, Andel)
   
-  df2019 <- table_ensam_medbarn_top %>% filter(år == "2019") %>% 
+  df5 <- table_ensam_medbarn_top %>% filter(år == as.character(new_y-5)) %>% 
     select(Område,desokod, Antal.hushåll, Andel)
   
   dfnew <- table_ensam_medbarn_top %>% filter(år == max(år)) %>% 
     select(Område,desokod, Antal.hushåll, Andel)
   
   # Hitta max antal rader
-  max_rows <- max(nrow(df2014), nrow(df2019), nrow(dfnew))
+  max_rows <- max(nrow(df10), nrow(df5), nrow(dfnew))
   
   # Funktion för att fylla med NA
   fill_na_rows <- function(df, max_rows){
@@ -250,19 +263,19 @@ tab_hushall <- function(){
     df
   }
   
-  df2014 <- fill_na_rows(df2014, max_rows)
-  df2019 <- fill_na_rows(df2019, max_rows)
+  df10 <- fill_na_rows(df10, max_rows)
+  df5 <- fill_na_rows(df5, max_rows)
   dfnew <- fill_na_rows(dfnew, max_rows)
   
   # Sätt ihop horisontellt
   table_side_by_side <- bind_cols(
-    df2014, df2019, dfnew
+    df10, df5, dfnew
   )
   
   # Byt kolumnnamn för tydlighet
   colnames(table_side_by_side) <- c(
-    paste0("2014_", colnames(df2014)),
-    paste0("2019_", colnames(df2019)),
+    paste0(paste0(as.character(new_y-10),"_"), colnames(df10)),
+    paste0(paste0(as.character(new_y-5),"_"), colnames(df5)),
     paste0(new_y,'_', colnames(dfnew))
   )
   
@@ -273,21 +286,25 @@ tab_hushall <- function(){
   )
   
   
+  years <- c(new_y - 10, new_y - 5, new_y)
+  
+  labels <- unlist(
+    lapply(years, function(y) {
+      c(
+        setNames("DeSO-kod", paste0(y, "_desokod")),
+        setNames("Område", paste0(y, "_Område")),
+        setNames("Antal hushåll", paste0(y, "_Antal.hushåll")),
+        setNames("Andel (%)", paste0(y, "_Andel"))
+      )
+    })
+  )
+  
   # Skapa gt-tabellen
   gt(table_side_by_side) %>%
-    tab_spanner(label = "2014", columns = starts_with("2014_")) %>%
-    tab_spanner(label = "2019", columns = starts_with("2019_")) %>%
+    tab_spanner(label = as.character(new_y-10), columns = starts_with(as.character(new_y-10))) %>%
+    tab_spanner(label = as.character(new_y-5), columns = starts_with(as.character(new_y-5))) %>%
     tab_spanner(label = new_y, columns = starts_with(paste0(new_y,'_'))) %>%
-    cols_label(
-      `2014_desokod` = "DeSO-kod", `2014_Område` = "Område",
-      `2014_Antal.hushåll` = "Antal hushåll", `2014_Andel` = "Andel (%)",
-      `2019_desokod` = "DeSO-kod", `2019_Område` = "Område",
-      `2019_Antal.hushåll` = "Antal hushåll", `2019_Andel` = "Andel (%)",
-      !!sym(paste0(new_y, "_desokod")) := "DeSO-kod", # Automatisk från 
-      !!sym(paste0(new_y, "_Område")) := "Område",
-      !!sym(paste0(new_y, "_Antal.hushåll")) := "Antal hushåll",
-      !!sym(paste0(new_y, "_Andel")) := "Andel (%)"
-    ) %>%
+    cols_label(.list = labels) %>%
     fmt_number(
       columns = ends_with("Antal.hushåll"),
       decimals = 0
