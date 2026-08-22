@@ -5,7 +5,7 @@ Dessa funktioner är nödvändiga för i stort sett alla LiL-projekt:
 - install_load_packages.R
 - settings.R
 
-pxweb_url.R används för projekt som importerar data där pxweb används (exempelvis SCB och Folkhälsomyndigheten)
+pxweb_url.R används för projekt som importerar data där pxweb v2 används (SCB i nuläget). När data importeras och pxweb v1 används behöver URL:en som helhet klistras in.
 
 survey_berakning.R används för projekt där man använder sig av enkätdata, såsom *Liv och hälsa ung* och Folkhälsomyndighetens *Nationella folkhälsoenkäten*.
 
