@@ -35,6 +35,54 @@ get_kpi_lista <- function() {
   kpi_lista
 }
 
+get_kolada_values <- function(kpi, municipality, unit_type) {
+  endpoint <- paste0(
+    "https://api.kolada.se/v3/data/kpi/",
+    paste(kpi, collapse = ","),
+    "/",
+    unit_type,
+    "/",
+    paste(municipality, collapse = ",")
+  )
+  response <- httr::GET(
+    endpoint,
+    query = list(page = 1, per_page = 5000)
+  )
+  httr::stop_for_status(response)
+
+  response_values <- jsonlite::fromJSON(
+    httr::content(response, as = "text", encoding = "UTF-8"),
+    simplifyDataFrame = FALSE
+  )$values
+
+  if (length(response_values) == 0) {
+    return(data.frame())
+  }
+
+  rows <- lapply(response_values, function(item) {
+    values <- item$values
+    if (length(values) == 0) {
+      return(NULL)
+    }
+
+    data.frame(
+      kpi = item$kpi,
+      period = item$period,
+      municipality = item$municipality,
+      gender = vapply(values, `[[`, character(1), "gender"),
+      count = vapply(values, `[[`, numeric(1), "count"),
+      status = vapply(values, `[[`, character(1), "status"),
+      value = vapply(values, function(value) {
+        if (is.null(value$value)) NA_real_ else as.numeric(value$value)
+      }, numeric(1)),
+      isdeleted = vapply(values, `[[`, logical(1), "isdeleted"),
+      stringsAsFactors = FALSE
+    )
+  })
+
+  dplyr::bind_rows(rows)
+}
+
 search_kolada <- function(sok_ord = NULL){
   # Stopfunktioner för felinmatning
   
@@ -107,7 +155,7 @@ search_and_fetch_kolada <- function(sok_ord = NULL, kommunniva = 'municipality',
 
   # Tar hem data för variablerna och kommunerna, använder felhantering om det inte går
   data <- tryCatch(
-    get_values(kpi = kpi_ids, municipality = kommunkod, unit_type = kommunniva),
+    get_kolada_values(kpi = kpi_ids, municipality = kommunkod, unit_type = kommunniva),
     error = function(e) stop("Fel vid hämtning av data: testa funktionen search_kolada(). Detaljer: ", e$message)
   )
   
