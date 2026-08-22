@@ -16,6 +16,8 @@ install_and_load <- function() {
     remotes::install_github("ropengov/pxweb")
   }
 
+  library(pxweb)
+
   # CRAN-paket
   cran_packages <- c(
     "dplyr",
@@ -50,7 +52,14 @@ install_and_load <- function() {
     'ggrepel',
     'stringi',
     'readr',
-    'glue'
+    'glue',
+    'survey',
+    'zoo',
+    'svglite',
+    'haven',
+    'lubridate',
+    'reactablefmtr',
+    'yyjsonr'
   )
   
   # Installera och ladda CRAN-paket
