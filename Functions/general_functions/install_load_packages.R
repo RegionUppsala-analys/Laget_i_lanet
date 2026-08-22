@@ -57,9 +57,7 @@ install_and_load <- function() {
     'zoo',
     'svglite',
     'haven',
-    'lubridate',
-    'reactablefmtr',
-    'yyjsonr'
+    'lubridate'
   )
   
   # Installera och ladda CRAN-paket
