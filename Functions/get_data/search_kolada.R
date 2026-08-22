@@ -67,7 +67,7 @@ get_kolada_values <- function(kpi, municipality, unit_type) {
 
     data.frame(
       kpi = item$kpi,
-      period = item$period,
+      year = item$period,
       municipality = item$municipality,
       gender = vapply(values, `[[`, character(1), "gender"),
       count = vapply(values, `[[`, numeric(1), "count"),
