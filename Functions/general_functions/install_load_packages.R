@@ -9,9 +9,7 @@ install_and_load <- function() {
     install.packages("remotes")
   }
 
-  if ("pxweb" %in% loadedNamespaces()) {
-    message("pxweb kan inte installeras om paketet redan är laddat. Starta om R och kör om funktionen.")
-  } else {
+  if (!requireNamespace("pxweb", quietly = TRUE)) {
     # Installera eller uppdatera pxweb från GitHub
     remotes::install_github("ropengov/pxweb")
   }

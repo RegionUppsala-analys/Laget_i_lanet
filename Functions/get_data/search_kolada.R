@@ -17,6 +17,24 @@
 }
 
 # Funktion för sökning 
+get_kpi_lista <- function() {
+  response <- httr::GET(
+    "https://api.kolada.se/v3/kpi",
+    query = list(page = 1, per_page = 5000)
+  )
+  httr::stop_for_status(response)
+
+  kpi_lista <- jsonlite::fromJSON(
+    httr::content(response, as = "text", encoding = "UTF-8")
+  )$values
+
+  if (is.null(kpi_lista) || !is.data.frame(kpi_lista)) {
+    stop("Kolada API returnerade ingen KPI-lista.")
+  }
+
+  kpi_lista
+}
+
 search_kolada <- function(sok_ord = NULL){
   # Stopfunktioner för felinmatning
   
@@ -26,7 +44,7 @@ search_kolada <- function(sok_ord = NULL){
   }
   
   # Tar hem information om alla variabler på kolada
-  kpi_lista <- get_kpi()
+  kpi_lista <- get_kpi_lista()
   
   # Tar ut raderna med ordet i titeln i sig eller nära 
   resultat <- kpi_lista[agrep(sok_ord, kpi_lista$title, ignore.case = TRUE, max.distance = 0.1), ]
@@ -67,7 +85,7 @@ search_and_fetch_kolada <- function(sok_ord = NULL, kommunniva = 'municipality',
   
   # Tar hem information om alla variabler på kolada
  
-  kpi_lista <- get_kpi()
+  kpi_lista <- get_kpi_lista()
   # Tar ut raderna med ordet i titeln i sig / nära rätt ord
   resultat <- kpi_lista[agrep(sok_ord, kpi_lista$title, ignore.case = TRUE, max.distance = match), ]
  
