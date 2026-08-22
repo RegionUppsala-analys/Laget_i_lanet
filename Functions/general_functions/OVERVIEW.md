@@ -39,8 +39,7 @@ px_get <- pxweb_get(url, px_get_list)
 df_livslangd <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
 df_livslangd <- na.omit(df_livslangd)
 
-
-df_livslangd <- df_livslangd |> 
+df_livslangd <- df_livslangd %>%
 tidyr::pivot_wider(             
     names_from = "tabellinnehåll",
     values_from = "value",

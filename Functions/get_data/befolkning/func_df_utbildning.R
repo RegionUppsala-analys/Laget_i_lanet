@@ -4,11 +4,7 @@
 
 func_df_utbildning <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__UF__UF0506__UF0506B/Utbildning/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/UF/UF0506/UF0506B/Utbildning'
-  
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB3981')
+  url <- pxweb_url("TAB3981")
   
   px_get_list <- list(Region = c(lanskod,kommunkod),
                       UtbildningsNiva = '*',
@@ -22,6 +18,14 @@ func_df_utbildning <- function(){
   
   # laddar data och gör till rätt format
   df_utbildning <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_utbildning <- na.omit(df_utbildning)
+
+  df_utbildning <- df_utbildning |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   df_utbildning <- df_utbildning %>% select(region, utbildningsnivå, kön, år, Antal) # tar bort NA då det endast finns uppgift saknas för Riket
   
   # sparar data med variabler:

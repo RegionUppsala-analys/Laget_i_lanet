@@ -4,12 +4,7 @@
 
 func_df_deso_utbildning <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__UF__UF0506__UF0506D/UtbSUNBefDesoRegsoN/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/UF/UF0506/UF0506D/UtbSUNBefDesoRegsoN'
-  
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6534')
-  
+  url <- pxweb_url("TAB6534")
   meta  <- pxweb_get(url)
   # Visa tillgängliga regionkoder
   regioner <- meta$variables[[1]]$values
@@ -27,6 +22,13 @@ func_df_deso_utbildning <- function(){
   
   # laddar data och gör till rätt format
   df_utbildning <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_utbildning <- na.omit(df_utbildning)
+
+  df_utbildning <- df_utbildning |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   # sparar data med variabler:
   
   suppressMessages({

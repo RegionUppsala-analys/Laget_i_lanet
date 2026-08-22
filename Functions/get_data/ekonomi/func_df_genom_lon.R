@@ -3,12 +3,7 @@
 # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__AM__AM0110__AM0110B/LonYrkeRegionAN/
 
 func_df_genom_lon <- function(){
-  url <-  'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/AM/AM0110/AM0110B/LonYrkeRegionAN'
-  
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB5881')
-  
+  url <- pxweb_url("TAB5881")
   meta <- pxweb_get(url)
   
   latest_year <- tail(meta[['variables']][[6]][['values']],1)
@@ -25,7 +20,14 @@ func_df_genom_lon <- function(){
   
   # laddar data och gör till rätt format
   genom_lon <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
+  genom_lon <- na.omit(genom_lon)
+
+  genom_lon <- genom_lon |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # setting NAs to 0
   genom_lon <- genom_lon %>% replace(is.na(.), 0)
   

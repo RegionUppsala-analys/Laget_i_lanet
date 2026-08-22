@@ -1,10 +1,6 @@
 ################ Folkmängd efter födelseort #####################
 func_df_folkmangd_fodd <- function(){# https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101E/InrUtrFoddaRegAlKon/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101E/InrUtrFoddaRegAlKon'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB4823')
-  
+  url <- pxweb_url("TAB4823")
   meta <- pxweb_get(url)
   
   max_ar  <- max(meta[["variables"]][[6]]$values)
@@ -20,6 +16,14 @@ func_df_folkmangd_fodd <- function(){# https://www.statistikdatabasen.scb.se/pxw
   
   # laddar data och gör till rätt format
   df_folkmangd_fodd <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_folkmangd_fodd <- na.omit(df_folkmangd_fodd)
+
+  df_folkmangd_fodd <- df_folkmangd_fodd |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   df_folkmangd_fodd <- df_folkmangd_fodd[df_folkmangd_fodd$ålder != 'totalt ålder',]
   
   df_folkmangd_fodd$ålder <- gsub("\\+", "", df_folkmangd_fodd$ålder)

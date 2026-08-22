@@ -3,10 +3,7 @@ func_foddadoda_inut_flytt <- function(){
   ########## Antal födda
   # framskrivning födda , döda inrikes utrikes flytt, in- och utvandring
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0401__BE0401A/BefProgOsiktRegN/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0401/BE0401A/BefProgOsiktRegN'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB698')
+  url <- pxweb_url("TAB698")
   
   px_get_list <- list(Region = kommunkod,
                       Kon = '*',
@@ -19,17 +16,20 @@ func_foddadoda_inut_flytt <- function(){
   
   # laddar data och gör till rätt format
   df_fram <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
+  df_fram <- na.omit(df_fram)
+
+  df_fram <- df_fram |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   df_fram <- df_fram %>% filter(år > min(år)) # tar bort senaste året så det ej överlappar med annan data
   
   
   # Födda och döda bakåt i tiden
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101G/BefforandrKvRLK/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101G/BefforandrKvRLK'
-  
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB5169')
+  url <- pxweb_url("TAB5169")
   
   px_get_list <- list(Region = kommunkod,
                       Forandringar='*',
@@ -42,6 +42,13 @@ func_foddadoda_inut_flytt <- function(){
   px_get <- pxweb_get(url,px_get_list)
   
   df_bak <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_bak <- na.omit(df_bak)
+
+  df_bak <- df_bak |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   df_bak <- df_bak %>% filter(år > 2002 ) %>% pivot_wider(names_from =förändringar,values_from = `Antal personer` ) %>% 
     select(region, kön, år, födda, döda) %>% rename('Tot_födda'=födda, 'Tot_döda'=döda)
@@ -58,10 +65,7 @@ func_foddadoda_inut_flytt <- function(){
   # laddar data och gör till rätt format
   # in och utflytt, in och utvandring
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101J/Flyttningar97/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101J/Flyttningar97'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB1212')
+  url <- pxweb_url("TAB1212")
   
   px_get_list <- list(Region = kommunkod,
                       Alder='*',
@@ -73,7 +77,14 @@ func_foddadoda_inut_flytt <- function(){
   px_get <- pxweb_get(url,px_get_list)
   
   df_bak <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
+  df_bak <- na.omit(df_bak)
+
+  df_bak <- df_bak |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   df_bak <- df_bak %>% filter(år > 2002, grepl("totalt", ålder, ignore.case = TRUE)) %>% group_by(region, kön, år) %>%
     summarise(Invandring = sum(Invandringar), Utvandring  = sum(Utvandringar),
               Inrikes_inflyttning = sum(`Inrikes inflyttningar`),

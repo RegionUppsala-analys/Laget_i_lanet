@@ -2,11 +2,7 @@
 # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__AM__AM0208__AM0208D/YREG56BAS/
 
 func_df_arbetsplats <- function(){
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/AM/AM0208/AM0208D/YREG56BAS'  
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB4436')
-  
+  url <- pxweb_url("TAB4436")
   meta <- pxweb_get(url)
   regioner <- meta$variables[[1]]$values
   
@@ -26,7 +22,14 @@ func_df_arbetsplats <- function(){
   
   # laddar data och gör till rätt format
   df_arbetsplats <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
+  df_arbetsplats <- na.omit(df_arbetsplats)
+
+  df_arbetsplats <- df_arbetsplats |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   df_arbetsplats <- df_arbetsplats %>% group_by(region,kön, `näringsgren SNI 2007`) %>% 
     summarize(Antal = sum(Antal), .groups = 'drop')
   

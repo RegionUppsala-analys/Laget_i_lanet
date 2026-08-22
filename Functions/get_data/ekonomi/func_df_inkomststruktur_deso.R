@@ -3,11 +3,7 @@
 
 func_df_inkomststruktur <- function(){
   
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0110/HE0110I/Tab2InkDesoRegso'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6683')
-  
+  url <- pxweb_url("TAB6683")
   meta <- pxweb_get(url)
   regioner <- meta$variables[[1]]$values
   
@@ -45,8 +41,15 @@ func_df_inkomststruktur <- function(){
   
   # laddar data och gör till rätt format
   df_inkomststruktur <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_inkomststruktur <- na.omit(df_inkomststruktur)
+
+  df_inkomststruktur <- df_inkomststruktur |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # sparar data med variabler:
-  
   df_inkomststruktur <- df_inkomststruktur %>%
     mutate(across(where(is.numeric), ~replace_na(.x, 0)))
   df_inkomststruktur <- df_inkomststruktur %>% rename(desokod=region)

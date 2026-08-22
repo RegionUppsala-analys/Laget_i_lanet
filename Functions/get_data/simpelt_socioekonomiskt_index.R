@@ -5,11 +5,7 @@
 simpelt_soe_index <- function(){
   {
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__AM__AM0210__AM0210G/ArRegDesoStatusN/ 
-    url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/AM/AM0210/AM0210G/ArRegDesoStatusN'
-    
-    # pxweb v2
-    #  url <- print_pxwebv2('TAB6680')
-    
+    url <- pxweb_url("TAB6680")
     meta  <- pxweb_get(url)
     # Visa tillgängliga regionkoder
     regioner <- meta$variables[[1]]$values
@@ -17,24 +13,14 @@ simpelt_soe_index <- function(){
     senaste_aret <- max(as.integer(meta$variables[[5]]$values))
     
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__HE__HE0110__HE0110I/Tab4InkDesoRegso/
-    url2 <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0110/HE0110I/Tab4InkDesoRegso'
-    
-    # pxweb v2
-    #  url2 <- print_pxwebv2('TAB6685')
-    
-    
+    url2 <- pxweb_url("TAB6685")
     meta2  <- pxweb_get(url2)
     
     senaste_aret2 <- max(as.integer(meta2$variables[[4]]$values))
     
     # Befolkning 25-64 år efter region, utbildningsnivå och år
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__UF__UF0506__UF0506D/UtbSUNBefDesoRegsoN/
-    url3 <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/UF/UF0506/UF0506D/UtbSUNBefDesoRegsoN'
-    
-    # pxweb v2
-    #  url3 <- print_pxwebv2('TAB6534')
-    
-    
+    url3 <- pxweb_url("TAB6534")
     meta3  <- pxweb_get(url3)
     
     senaste_aret3 <- max(as.integer(meta3$variables[[4]]$values))
@@ -67,14 +53,17 @@ simpelt_soe_index <- function(){
                         Tid = as.character(senaste_aret))
     
     px_get <- pxweb_get(url,px_get_list)
-    
+
     # laddar data och gör till rätt format
     df_arbetsloshet <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-    # sparar data med variabler:
-    
-    
-    # Finns dubbletter med NA 
-    
+    df_arbetsloshet <- na.omit(df_arbetsloshet)
+
+    df_arbetsloshet <- df_arbetsloshet |> 
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
+
     df_arbetsloshet <- df_arbetsloshet %>% rename(desokod=region)
     
     df_deso_arbetslos <- left_join(deso_sf, df_arbetsloshet, by = "desokod")
@@ -87,14 +76,17 @@ simpelt_soe_index <- function(){
                         Tid = as.character(senaste_aret))
     
     px_get <- pxweb_get(url2,px_get_list)
-    
+
     # laddar data och gör till rätt format
     df_lag_standard <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-    # sparar data med variabler:
-    
-    
-    # Finns dubbletter med NA 
-    
+    df_lag_standard <- na.omit(df_lag_standard)
+
+    df_lag_standard <- df_lag_standard |> 
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
+
     df_lag_standard <- df_lag_standard %>% rename(desokod=region)
     
     df_deso_lag_standard <- left_join(deso_sf, df_lag_standard, by = "desokod")
@@ -110,14 +102,17 @@ simpelt_soe_index <- function(){
                         Tid = as.character(senaste_aret))
     
     px_get <- pxweb_get(url3,px_get_list)
-    
+
     # laddar data och gör till rätt format
     df_utbildning <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-    # sparar data med variabler:
-    
-    
-    # Finns dubbletter med NA 
-    
+    df_utbildning <- na.omit(df_utbildning)
+
+    df_utbildning <- df_utbildning |> 
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
+
     df_utbildning <- df_utbildning %>% rename(desokod=region)
     
     df_deso_utbildning <- left_join(deso_sf, df_utbildning, by = "desokod")
@@ -250,10 +245,7 @@ simpelt_soe_index <- function(){
   
   # Andel utrikesfödda samma år som index
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101Y/FolkmDesoLandKon/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101Y/FolkmDesoLandKon'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6572')
+  url <- pxweb_url("TAB6572")
   
   uppsala_koder <- paste0(uppsala_koder,"_DeSO2025")
   px_get_list <- list(Region = uppsala_koder,
@@ -264,14 +256,22 @@ simpelt_soe_index <- function(){
   
   
   px_get <- pxweb_get(url,px_get_list)
-  
+
   # laddar data och gör till rätt format
   df_deso_fodelse <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_deso_fodelse <- na.omit(df_deso_fodelse)
+
+  df_deso_fodelse <- df_deso_fodelse |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # Finns dubbletter med NA 
   df_deso_fodelse <- df_deso_fodelse[complete.cases(df_deso_fodelse$Antal),] %>% rename(desokod=region)
-  
+
   df_deso_fodelse <- left_join(deso_sf, df_deso_fodelse, by = "desokod")
-  
+
   st_write(df_deso_fodelse, "Data/df_deso_fodelse_index.gpkg",  delete_dsn = TRUE)
   
   print('Nedladdning av "df_deso_fodelse_index.gpkg" genomfördes')

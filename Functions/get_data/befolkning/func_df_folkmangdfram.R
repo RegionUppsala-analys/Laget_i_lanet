@@ -3,10 +3,7 @@
 
 func_df_folkmangdfram <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0401__BE0401A/BefProgRegFakN/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0401/BE0401A/BefProgRegFakN'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6008')
+  url <- pxweb_url("TAB6008")
   
   px_get_list <- list(Region = kommunkod,
                       InrikesUtrikes = '*',
@@ -20,6 +17,13 @@ func_df_folkmangdfram <- function(){
   
   # laddar data och gör till rätt format
   df_folkmangdfram <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_folkmangdfram <- na.omit(df_folkmangdfram)
+
+  df_folkmangdfram <- df_folkmangdfram |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   df_folkmangdfram$ålder <- gsub("\\+", "", df_folkmangdfram$ålder)
   df_folkmangdfram$ålder <- as.integer(gsub(" år", "", df_folkmangdfram$ålder))
   df_folkmangdfram$år = as.integer(df_folkmangdfram$år)

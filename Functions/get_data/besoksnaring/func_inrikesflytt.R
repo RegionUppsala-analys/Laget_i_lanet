@@ -1,11 +1,7 @@
 #inrikesflytt
 func_inrikesflytt <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101J/Flyttningar97/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101J/Flyttningar97'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB1212')
-  
+  url <- pxweb_url("TAB1212")
   meta <- pxweb_get(url)
   
   # tar ut alla län
@@ -26,8 +22,14 @@ func_inrikesflytt <- function(){
   px_data <- pxweb_get(url = url,pxweb_query_list )
   
   # Convert to data.frame 
-  df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text") %>% 
-    group_by(region) %>% summarize(Antal =sum(`Inrikes flyttningsöverskott`), .groups='drop') 
+  df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
+  df_inflytt <- na.omit(df_inflytt)
+
+  df_inflytt <- df_inflytt |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    ) %>% group_by(region) %>% summarize(Antal =sum(`Inrikes flyttningsöverskott`), .groups='drop')
   
   
   # sparar data med variabler: region, unrikes/utrikes född, kön, ålder, tid , antal

@@ -2,10 +2,7 @@
 ################# Folkmängd bakåt, antal efter region, kön , ålder, år 
 # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101A/BefolkningNy/
 func_df_folkmangd <- function(){
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101A/BefolkningNy'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB638')
+  url <- pxweb_url("TAB638")
   
   px_get_list <- list(Region = kommunkod,
                       Kon = '*',
@@ -18,6 +15,14 @@ func_df_folkmangd <- function(){
   
   # laddar data och gör till rätt format
   df_folkmangd <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_folkmangd <- na.omit(df_folkmangd)
+
+  df_folkmangd <- df_folkmangd |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   df_folkmangd <- df_folkmangd[df_folkmangd$ålder != 'totalt ålder',]
   
   df_folkmangd$ålder <- gsub("\\+", "", df_folkmangd$ålder)

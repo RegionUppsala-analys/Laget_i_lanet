@@ -6,11 +6,7 @@
 
 func_df_syssel_utb <- function(){
   
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/AA/AA0003/AA0003B/IntGr1KomUtbBAS'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6383')
-  
+  url <- pxweb_url("TAB6383")
   meta <- pxweb_get(url)
   regioner <- meta$variables[[1]]$values
   
@@ -30,7 +26,14 @@ func_df_syssel_utb <- function(){
   
   # laddar data och gör till rätt format
   df_syssel_utb <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
+  df_syssel_utb <- na.omit(df_syssel_utb)
+
+  df_syssel_utb <- df_syssel_utb |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # fixar NA till 0
   df_syssel_utb <- df_syssel_utb %>%
     mutate(across(where(is.numeric), ~ replace_na(.x, 0)))

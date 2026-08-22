@@ -2,11 +2,7 @@ func_df_inkomstklass <- function(){
   ## Deso Andel av befolkningen i inkomstklass efter region, inkomstslag, kön, tabellinnehåll och år
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__HE__HE0110__HE0110I/Tab1InkDesoRegso/
   {
-    url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0110/HE0110I/Tab1InkDesoRegso'
-    
-    # pxweb v2
-    #  url <- print_pxwebv2('TAB6679')
-    
+    url <- pxweb_url("TAB6679")
     meta  <- pxweb_get(url)
     
     regioner <- meta$variables[[1]]$values
@@ -45,9 +41,14 @@ func_df_inkomstklass <- function(){
     
     # laddar data och gör till rätt format
     df_inkomstklass <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-    # sparar data med variabler:
-    
-    
+    df_inkomstklass <- na.omit(df_inkomstklass)
+
+    df_inkomstklass <- df_inkomstklass |> 
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
+
     df_inkomstklass <- df_inkomstklass %>%
       mutate(across(where(is.numeric), ~replace_na(.x, 0)))
     df_inkomstklass <- df_inkomstklass %>% rename(desokod=region)

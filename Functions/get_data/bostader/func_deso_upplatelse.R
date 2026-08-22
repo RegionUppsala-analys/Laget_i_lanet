@@ -2,11 +2,7 @@
 func_deso_upplatelse <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BO__BO0104__BO0104X/BO0104T01N2/
   
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BO/BO0104/BO0104X/BO0104T01N2'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6638')
-  
+  url <- pxweb_url("TAB6638")
   # Hämta metadata för Region
   meta <- pxweb_get(url)
   
@@ -29,7 +25,14 @@ func_deso_upplatelse <- function(){
   
   # Convert to data.frame 
   df_deso <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
-  
+  df_deso <- na.omit(df_deso)
+
+  df_deso <- df_deso |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   write.csv(df_deso, "Data/df_deso.csv", row.names = F)
   
   print('Nedladdning av "df_deso.csv" har gått igenom')

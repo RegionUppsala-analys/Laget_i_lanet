@@ -25,12 +25,12 @@ Vid varje figur i qmd-filerna så har ALT-texter lagts in för att göra rapport
     Innehåller definitioner av kommuner och län (namn och koder), ggplot-tema samt färgkoder.
 
 -   **install_load_packages.R**\
-    Installerar (vid behov) och laddar alla paket som används i rapporten.
+    Installerar (vid behov) och laddar alla paket som används i rapporten. I nuläget (augusti 2026) finns en temporär kod för att hämta den senaste versionen av pxweb då CRAN-installeringen inte ger den senaste versionen som stödjer pxweb v2-syntax.
 
 -   **load_save_data.R**\
     Hanterar inhämtning av data. Större delen av dataladdningen sker här, oftast utanför funktioner. När skriptet körs hämtas aktuell data till rapporten.
 
-    -   create_save_ploots.R I detta skript så ligger alla funktioner som skapar plots till rapporten, funktionerna sparar plots både som svg och png så att användaren ska få välja format vid nedladdning. Svg används för rendering. Funktionerna kan också vara interaktiva plots i plotly eller leaflet som inte sparar plots i sig utan ska läggas in och köras i qmd-filen vid rendering.
+    -   create_save_plots.R I detta skript så ligger alla funktioner som skapar plots till rapporten, funktionerna sparar plots både som svg och png så att användaren ska få välja format vid nedladdning. Svg används för rendering. Funktionerna kan också vara interaktiva plots i plotly eller leaflet som inte sparar plots i sig utan ska läggas in och köras i qmd-filen vid rendering.
 
 -   **create_save_plots.R**\
     Innehåller funktioner för att skapa visualiseringar.

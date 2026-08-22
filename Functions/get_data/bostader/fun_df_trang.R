@@ -4,10 +4,7 @@
 fun_df_trang <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__LE__LE0105__LE0105B/LE0105Boende02/table/tableViewLayout1/
   
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/LE/LE0105/LE0105B/LE0105Boende02'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB5089')
+  url <- pxweb_url("TAB5089")
   meta <- pxweb_get(url)
   
   senaste_aret <- max(as.integer(meta$variables[[7]]$values))
@@ -26,6 +23,13 @@ fun_df_trang <- function(){
   
   # laddar data och gör till rätt format
   df_trang <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_trang <- na.omit(df_trang)
+
+  df_trang <- df_trang |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   write.csv(df_trang, "Data/df_trang.csv", row.names = F)
   

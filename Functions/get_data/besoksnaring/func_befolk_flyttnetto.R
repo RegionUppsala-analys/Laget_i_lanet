@@ -1,11 +1,7 @@
 # Folkämngd
 func_hallandsbesoksrapport <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101A/FolkmangdNov/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101A/FolkmangdNov'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB1267')
-  
+  url <- pxweb_url("TAB1267")
   meta <- pxweb_get(url)
   
   # tar ut alla län
@@ -26,8 +22,14 @@ func_hallandsbesoksrapport <- function(){
   px_data <- pxweb_get(url = url,pxweb_query_list )
   
   # Convert to data.frame 
-  df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text") %>% 
-    group_by(region) %>% summarize(Antal =sum(Antal), .groups='drop') 
+  df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
+  df_inflytt <- na.omit(df_inflytt)
+
+  df_inflytt <- df_inflytt |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    ) %>% group_by(region) %>% summarize(Antal =sum(Antal), .groups='drop')
   
   
   # sparar data
@@ -37,11 +39,7 @@ func_hallandsbesoksrapport <- function(){
   
   
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101A/BefolkningCKM/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101A/BefolkningCKM'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB5557')
-  
+  url <- pxweb_url("TAB5557")
   meta <- pxweb_get(url)
   
   # tar ut alla län
@@ -64,6 +62,13 @@ func_hallandsbesoksrapport <- function(){
   
   # Convert to data.frame 
   df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
+  df_inflytt <- na.omit(df_inflytt)
+
+  df_inflytt <- df_inflytt |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   
   # sparar data 
@@ -73,11 +78,7 @@ func_hallandsbesoksrapport <- function(){
   
   ####### Kommunnivå ########  
   
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101A/FolkmangdNov'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB1267')
-  
+  url <- pxweb_url("TAB1267")
   meta <- pxweb_get(url)
   
   
@@ -92,18 +93,20 @@ func_hallandsbesoksrapport <- function(){
   #print_scb_converter_input(url, pxweb_query_list)
   # Download data 
   px_data <- pxweb_get(url = url,pxweb_query_list )
-  
+
   # Convert to data.frame 
-  df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text") %>% 
-    group_by(region, år) %>% summarize(Folkmängd =sum(Antal), .groups='drop') 
+  df_inflytt <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
+  df_inflytt <- na.omit(df_inflytt)
+
+  df_inflytt <- df_inflytt |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    ) %>% group_by(region, år) %>% summarize(Folkmängd =sum(Antal), .groups='drop')
   
   
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101A/BefolkningCKM/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101A/BefolkningCKM'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB5557')
-  
+  url <- pxweb_url("TAB5557")
   meta <- pxweb_get(url)
   
   pxweb_query_list <-
@@ -118,10 +121,16 @@ func_hallandsbesoksrapport <- function(){
   #print_scb_converter_input(url, pxweb_query_list)
   # Download data 
   px_data <- pxweb_get(url = url,pxweb_query_list )
-  
+
   # Convert to data.frame 
-  df_inflytt2 <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text") %>%
-    select(region,år,Folkmängd) 
+  df_inflytt2 <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
+  df_inflytt2 <- na.omit(df_inflytt2)
+
+  df_inflytt2 <- df_inflytt2 |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    ) %>% select(region,år,Folkmängd)
   
   df_inflytt <- rbind(df_inflytt,df_inflytt2)
   

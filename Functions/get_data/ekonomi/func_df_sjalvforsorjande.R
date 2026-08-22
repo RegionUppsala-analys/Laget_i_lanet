@@ -5,11 +5,7 @@
 func_df_sjalvforsorjande <- function(){
   #https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__HE__HE0000/HE0000Tab01/
   
-  url <-  'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0000/HE0000Tab01'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6396')
-  
+  url <- pxweb_url("TAB6396")
   meta <- pxweb_get(url)
   
   latest_year <- tail(meta[['variables']][[7]][['values']],1)
@@ -27,7 +23,14 @@ func_df_sjalvforsorjande <- function(){
   
   # laddar data och gör till rätt format
   sjalvforsorjande <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
-  
+  sjalvforsorjande <- na.omit(sjalvforsorjande)
+
+  sjalvforsorjande <- sjalvforsorjande |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # setting NAs to 0
   sjalvforsorjande <- sjalvforsorjande %>% replace(is.na(.), 0)
   

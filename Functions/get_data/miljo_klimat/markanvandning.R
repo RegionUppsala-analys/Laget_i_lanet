@@ -1,10 +1,7 @@
 # Markanvändning 
 func_markanvandning <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__MI__MI0803__MI0803A/MarkanvN/
-  url <- "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/MI/MI0803/MI0803A/MarkanvN"
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB5118')
+  url <- pxweb_url("TAB5118")
   
   
   pxweb_query_list <- list(
@@ -21,7 +18,7 @@ func_markanvandning <- function(){
   
   # Steg 4: Omvandla data till ett data.frame för enklare hantering i R
   px_markanvandning <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
-  
+  px_markanvandning <- na.omit(px_markanvandning)
   
   # Omstrukturera data så att markanvändningsklasser blir kolumner
   px_markanvandning <- px_markanvandning %>%

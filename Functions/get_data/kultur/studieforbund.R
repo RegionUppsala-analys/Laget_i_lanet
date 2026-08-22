@@ -3,10 +3,7 @@
 # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__KU__KU0402/StudieforbHelarLanKo/table/tableViewLayout1/
 func_df_studieforbund <- function(){
   # Deltagare, män efter region, arrangemangstyp, verksamhetsform, studieförbund, distans/ej distans och år
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/KU/KU0402/StudieforbHelarLanKo'
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB1652')
-  
+  url <- pxweb_url("TAB1652")
   meta <- pxweb_get(url)
   
   # Skapa en referenstabell med kommunkoder och namn
@@ -27,9 +24,13 @@ func_df_studieforbund <- function(){
   
   # Convert to data.frame 
   df_studieforbund <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text") 
-  
-  # tar bort NA
   df_studieforbund <- na.omit(df_studieforbund)
+
+  df_studieforbund <- df_studieforbund |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   # sparar data med variabler: region, unrikes/utrikes född, kön, ålder, tid , antal
   write.csv(df_studieforbund, "Data/df_studieforbund.csv", row.names = F)

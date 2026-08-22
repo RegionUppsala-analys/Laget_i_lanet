@@ -1,11 +1,7 @@
 ########### Deso land/vatten areal ##############
 # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__MI__MI0802/Areal2025/
 func_df_deso_land_vatten <- function(){
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/MI/MI0802/Areal2025'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB6420')
-  
+  url <- pxweb_url("TAB6420")
   meta <- pxweb_get(url)
   
   # Visa tillgängliga regionkoder
@@ -23,7 +19,14 @@ func_df_deso_land_vatten <- function(){
   
   px_data <- pxweb_get(url,pxweb_query_list)
   px_deso <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
-  
+  px_deso <- na.omit(px_deso)
+
+  px_deso <- px_deso |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   write.csv(px_deso, "Data/df_deso_land_vatten.csv", row.names = F)
   
   print('Nedladdning av "df_deso_land_vatten.csv" har genomförts')

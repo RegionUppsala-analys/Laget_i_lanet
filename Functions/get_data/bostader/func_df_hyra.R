@@ -2,10 +2,7 @@
 func_df_hyra <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BO__BO0406__BO0406E/BO0406Tab01/
   # Läser in data
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BO/BO0406/BO0406E/BO0406Tab01'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB4590')
+  url <- pxweb_url("TAB4590")
   
   pxweb_query_list <-
     list('Region' = c("03",kommunkod),
@@ -20,7 +17,14 @@ func_df_hyra <- function(){
   
   # Convert to data.frame 
   df_hyra <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
-  
+  df_hyra <- na.omit(df_hyra)
+
+  df_hyra <- df_hyra |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # imputerar ett saknande värde till samma som året innan och efter
   df_hyra$`Medianhyra i hyreslägenhet`[df_hyra$region=='Tierp' & df_hyra$år=='2017'] <- 86
   

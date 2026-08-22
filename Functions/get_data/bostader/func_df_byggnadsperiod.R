@@ -5,10 +5,7 @@
 func_df_byggnadsperiod <- function(){
   # Laddar in data om Antal lägenheter efter region, hustyp och byggnadsperiod. År 2013 - 2024
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BO__BO0104__BO0104D/BO0104T02/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BO/BO0104/BO0104D/BO0104T02'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB822')
+  url <- pxweb_url("TAB822")
   
   # Skapa en referenstabell med kommunkoder och namn
   
@@ -30,8 +27,14 @@ func_df_byggnadsperiod <- function(){
   
   # Convert to data.frame 
   df_byggnadsperiod <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
-  
-  
+  df_byggnadsperiod <- na.omit(df_byggnadsperiod)
+
+  df_byggnadsperiod <- df_byggnadsperiod |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   # sparar data med variabler: region, unrikes/utrikes född, kön, ålder, tid , antal
   write.csv(df_byggnadsperiod, "Data/df_byggnadsperiod.csv", row.names = F)
   

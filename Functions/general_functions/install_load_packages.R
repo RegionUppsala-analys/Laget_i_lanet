@@ -4,9 +4,20 @@
 
 
 install_and_load <- function() {
+  # Installera pxweb v2 från GitHub då det inte hämtas från CRAN i nuläget.
+  if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes")
+  }
+
+  if ("pxweb" %in% loadedNamespaces()) {
+    message("pxweb kan inte installeras om paketet redan är laddat. Starta om R och kör om funktionen.")
+  } else {
+    # Installera eller uppdatera pxweb från GitHub
+    remotes::install_github("ropengov/pxweb")
+  }
+
   # CRAN-paket
   cran_packages <- c(
-    "pxweb",
     "dplyr",
     "ggplot2",
     "tidyr",
@@ -19,7 +30,6 @@ install_and_load <- function() {
     "showtext",
     "gt",
     "plotly",
-    "remotes", 
     'reactable',
     'forcats',
     'scales',
@@ -41,7 +51,6 @@ install_and_load <- function() {
     'stringi',
     'readr',
     'glue'
-    
   )
   
   # Installera och ladda CRAN-paket

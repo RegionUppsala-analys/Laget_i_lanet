@@ -4,10 +4,7 @@ func_df_lagenhetstyp <- function(){
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BO__BO0104__BO0104D/BO0104T09/
   # laddar in data om Antal lägenheter efter region, hustyp, lägenhetstyp och år
   
-  url <-'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BO/BO0104/BO0104D/BO0104T09'
-  
-  # pxweb v2
-  #  url <- print_pxwebv2('TAB4807')
+  url <- pxweb_url("TAB4807")
   
   pxweb_query_list <-
     list('Region' = kommunkod,
@@ -23,7 +20,14 @@ func_df_lagenhetstyp <- function(){
   
   # Convert to data.frame 
   df_lagenhetstyp <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
-  
+  df_lagenhetstyp <- na.omit(df_lagenhetstyp)
+
+  df_lagenhetstyp <- df_lagenhetstyp |> 
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
+
   write.csv(df_lagenhetstyp, "Data/df_lagenhetstyp.csv", row.names = F) 
   
   print('Nedladdning av "df_lagenhetstyp.csv" har gått igenom')
