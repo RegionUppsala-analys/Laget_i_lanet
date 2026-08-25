@@ -35,7 +35,7 @@ func_df_sjalvrapporterad <- function(){ # https://fohm-app.folkhalsomyndigheten.
 
 
 
-func_df_livstillfresstallelse <- function(){ # https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/sv/A_Folkhalsodata/A_Folkhalsodata__A_Mo8__Halsoutfall__02Pyskhals__02.02tillfredsZelev/tillfrBaReg.px/table/tableViewLayout1/
+func_df_livstillfredsstallelse <- function(){ # https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/pxweb/sv/A_Folkhalsodata/A_Folkhalsodata__A_Mo8__Halsoutfall__02Pyskhals__02.02tillfredsZelev/tillfrBaReg.px/table/tableViewLayout1/
   url <- 'https://fohm-app.folkhalsomyndigheten.se/Folkhalsodata/api/v1/sv/A_Folkhalsodata/A_Mo8/Halsoutfall/02Pyskhals/02.02tillfredsZelev/tillfrBaReg.px'
   
   # Metadata
@@ -63,7 +63,7 @@ func_df_livstillfresstallelse <- function(){ # https://fohm-app.folkhalsomyndigh
   
   
   # sparar data med variabler:
-  write.csv(df_psykist, "Data/df_livstillfresstallelse.csv", row.names = F)
+  write.csv(df_psykist, "Data/df_livstillfredsstallelse.csv", row.names = F)
   
-  print('Nedladdning av "df_livstillfresstallelse.csv" genomfördes')
+  print('Nedladdning av "df_livstillfredsstallelse.csv" genomfördes')
 }

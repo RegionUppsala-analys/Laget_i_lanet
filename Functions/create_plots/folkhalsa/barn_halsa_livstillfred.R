@@ -14,26 +14,52 @@ sjalvrapporterad_halsa <- function(){
                "Flickor" = "#D57667")
   
   # skapa plot 
-  p <- ggplot(df, aes(x=Region, y = Andel, group = Kön, color =Kön, fill=Kön))+
-    geom_line(linewidth=1.5)+ geom_point(size=2)+
-    geom_ribbon(aes(ymin = Konfidensintervall.nedre.gräns, ymax = Konfidensintervall.övre.gräns), alpha = 0.3, color =NA) +
-    scale_color_manual(values = kon_col)+
-    scale_fill_manual(values = kon_col)+
-    scale_y_continuous(breaks = seq(0,100,by=10),
-                       limits = c(0,100))+
-    
-    labs(x="",
-         title = str_wrap(paste("Andel barn med minst 2 återkommande fysiska eller psykiska besvär –", ar), width=50),
-         caption = "Källa: Folkhälsomyndigheten, SCB",
-         y = "Andel (%)",
-         color="",
-         fill="")+
-    theme(plot.caption = element_text(hjust=0),
-          axis.text.x = element_text(angle = 45, vjust=0.5))
-  
-  
-  p
-  
+  p <- ggplot(
+  df,
+  aes(
+    x = Region,
+    y = Andel,
+    fill = Kön
+  )
+) +
+  geom_col(
+    position = position_dodge(width = 0.9)
+  ) +
+  geom_errorbar(
+    aes(
+      ymin = Konfidensintervall.nedre.gräns,
+      ymax = Konfidensintervall.övre.gräns
+    ),
+    width = 0.4,
+    linewidth = 1,
+    position = position_dodge(width = 0.9)
+  ) +
+  scale_fill_manual(values = kon_col) +
+  scale_y_continuous(
+    breaks = seq(0, 100, by = 10),
+    limits = c(0, 100)
+  ) +
+  labs(
+    x = "",
+    title = str_wrap(
+      paste(
+        "Andel barn med minst två återkommande fysiska eller psykiska besvär –",
+        ar
+      ),
+      width = 50
+    ),
+    caption = "Källa: Folkhälsomyndigheten, SCB",
+    y = "Andel (%)",
+    fill = ""
+  ) +
+  theme(
+    plot.caption = element_text(hjust = 0),
+    axis.text.x = element_text(
+      angle = 45,
+      vjust = 0.5
+    )
+  )
+
   # Sparar plot 
   ggsave(
     paste0("Figurer/sjalvrapporterad_halsa.svg"),
@@ -56,9 +82,9 @@ sjalvrapporterad_halsa <- function(){
 # livstillfresstallelse, barn
 
 
-livstillfresstallelse <- function(){
+livstillfredsstallelse <- function(){
   # Läsa in data  
-  df <- read.csv('Data/df_livstillfresstallelse.csv')
+  df <- read.csv('Data/df_livstillfredsstallelse.csv')
   
   
   df <- df %>% mutate(Region = factor(Region, levels = sort(unique(df$Region))))
@@ -69,37 +95,59 @@ livstillfresstallelse <- function(){
   kon_col <- c("Pojkar" = "#4AA271",
                "Flickor" = "#D57667")
   
-  # skapa plot 
-  p <- ggplot(df, aes(x=Region, y = Andel, group = Kön, color =Kön, fill=Kön))+
-    geom_line(linewidth=1.5)+ geom_point(size=2)+
-    geom_ribbon(aes(ymin = Konfidensintervall.nedre.gräns, ymax = Konfidensintervall.övre.gräns), alpha = 0.3, color =NA) +
-    scale_color_manual(values = kon_col)+
-    scale_fill_manual(values = kon_col)+
-    scale_y_continuous(breaks = seq(0,100,by=10),
-                       limits = c(0,100))+
-    
-    labs(x="",
-         title = str_wrap(paste("Andel barn med hög livstillfredsställelse –", ar), width=50),
-         caption = "Källa: SCB",
-         y = "Andel (%)",
-         color="",
-         fill="")+
-    theme(plot.caption = element_text(hjust=0),
-          axis.text.x = element_text(angle = 45, vjust=0.5))
-  
-  
-  p
-  
+  p <- ggplot(
+    df,
+    aes(
+      x = Region,
+      y = Andel,
+      fill = Kön
+    )
+  ) +
+    geom_col(
+      position = position_dodge(width = 0.9)
+    ) +
+    geom_errorbar(
+      aes(
+        ymin = Konfidensintervall.nedre.gräns,
+        ymax = Konfidensintervall.övre.gräns
+      ),
+      width = 0.4,
+      linewidth = 1,
+      position = position_dodge(width = 0.9)
+    ) +
+    scale_fill_manual(values = kon_col) +
+    scale_y_continuous(
+      breaks = seq(0, 100, by = 10),
+      limits = c(0, 100)
+    ) +
+    labs(
+      x = "",
+      title = str_wrap(
+        paste("Andel barn med hög livstillfredsställelse –", ar),
+        width = 50
+      ),
+      caption = "Källa: SCB",
+      y = "Andel (%)",
+      fill = ""
+    ) +
+    theme(
+      plot.caption = element_text(hjust = 0),
+      axis.text.x = element_text(
+        angle = 45,
+        vjust = 0.5
+      )
+    )
+
   # Sparar plot 
   ggsave(
-    paste0("Figurer/livstillfresstallelse.svg"),
+    paste0("Figurer/livstillfredsstallelse.svg"),
     plot = p,
     width = 8,
     height = 6
   )
   
   ggsave(
-    paste0("Figurer/livstillfresstallelse.png"),
+    paste0("Figurer/livstillfredsstallelse.png"),
     plot = p,
     width = 8,
     height = 6,

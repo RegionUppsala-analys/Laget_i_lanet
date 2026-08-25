@@ -243,10 +243,6 @@ livslangd_kom <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
-  
-  # Visa vart 4:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 2)]
 
   # Sätter y-axel till det lägsta värdet och det högsta värdet avrundat till närmaste 2-tal
   y_min <- floor(min(df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
@@ -266,15 +262,14 @@ livslangd_kom <- function(){
     
     p <- ggplot(temp, aes(x =År, y =  Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden., color=Kön, group=Kön))+
       geom_line(linewidth=2)+ geom_point(size=3)+scale_color_manual(values = kon_col)+
-      scale_x_discrete(breaks = visa_ar) +
+      scale_x_discrete(breaks = c(min(temp$År), max(temp$År))) +
       scale_y_continuous(breaks = y_breaks, limits = c(y_min, y_max_axis))+
       labs(x="",
            title = str_wrap(paste("Medellivslängden i",r, "(5-årsmedelvärden)"), width=50),
            caption = "Källa: SCB",
            y = "Medellivslängd",
            color="")+
-      theme(plot.caption = element_text(hjust=0),
-            axis.text.x = element_text(angle = 45, hjust=1))
+      theme(plot.caption = element_text(hjust=0))
     
     p
     
