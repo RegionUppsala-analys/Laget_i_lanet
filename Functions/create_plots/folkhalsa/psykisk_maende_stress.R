@@ -111,10 +111,6 @@ Psykisk_stress <- function(){
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 2)]
-  
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
@@ -126,7 +122,7 @@ Psykisk_stress <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     labs(x="",
          title = str_wrap("Andel stressade – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
@@ -135,8 +131,7 @@ Psykisk_stress <- function(){
          fill="",
          subtitle = str_wrap("Streckade linjer är Riksandelen", width = 50))+
     theme(plot.caption = element_text(hjust=0),
-          plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold'),
-          axis.text.x = element_text(angle =45, hjust=1))
+          plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold'))
   
   
   p
@@ -180,10 +175,6 @@ svar_psykisk_stress <-  function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 3)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -196,15 +187,14 @@ svar_psykisk_stress <-  function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     labs(x="",
          title = str_wrap("Andel mycket stressade – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
          y = "Andel (%)",
          color="",
          fill="")+
-    theme(plot.caption = element_text(hjust=0),
-          axis.text.x = element_text(angle = 45, hjust=1))
+    theme(plot.caption = element_text(hjust=0))
   
   
   
