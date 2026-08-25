@@ -12,10 +12,6 @@ alkohol <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -31,7 +27,7 @@ alkohol <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Andel riskkonsumenter av alkohol – Uppsala län (4-årsmedelvärden)", width=50),
@@ -67,66 +63,149 @@ alkohol <- function(){
 }
 
 frukt_gront <- function(){
-  # Läser in data
-  df <- read.csv("Data/df_frukt_gront.csv") %>% 
-    filter(Frukt.och.grönt %in% c("Frukt och bär minst 2 gånger/dag" ,
-                                  "Grönsaker och rotfrukter minst 2 gånger/dag"))
-  
-  cols <- c( "#F9B000" , "#019CD7" )
-  
+
+  df <- read.csv("Data/df_frukt_gront.csv") %>%
+    filter(
+      Frukt.och.grönt %in% c(
+        "Frukt och bär minst 2 gånger/dag",
+        "Grönsaker och rotfrukter minst 2 gånger/dag"
+      )
+    )
+
+  cols <- c("#F9B000", "#019CD7")
   names(cols) <- unique(df$Frukt.och.grönt)
-  
-  # Graf per region
+
+  # Referensregion
+  df_uppsala <- df %>%
+    filter(Region == "Uppsala län")
+
   for(r in unique(df$Region)){
-    
-    temp <- df %>% filter(Region == r)
-    
-    # om tidsserien är tillräkligt lång
-    ara <- unique(temp$År)
-    visa_ar <- if(length(ara)> 6)ara[seq(1, length(ara), by = 3)]else ara
-    
-    # skapa plot 
-    p <- ggplot(temp, aes(x=År, y =Andel, color = Frukt.och.grönt, group=Frukt.och.grönt, fill=Frukt.och.grönt))+
-      geom_line(linewidth=1.5 )+facet_wrap(~Kön, ncol=2)+
-      geom_point(size=2)+
-      geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3) +
-      scale_color_manual(values = cols)+
-      scale_fill_manual(values = cols)+
-      scale_y_continuous(breaks = seq(0,100,by=10),
-                         limits = c(0,100))+
-      scale_x_discrete(breaks = visa_ar) +
-      labs(x="",
-           title = str_wrap(paste("Andel som äter frukt och grönt minst 2 gånger/dag –", r), width=50),
-           caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
-           y = "Andel (%)",
-           color="",
-           fill="")+
-      theme(plot.caption = element_text(hjust=0),
-            axis.text.x = element_text(angle =45, hjust=1),
-            legend.position = "bottom")+ 
-      guides(color = guide_legend(nrow = 2))
-    
-    
-    p
-    
-    # Sparar plot 
+
+    if(r == "Uppsala län") next
+
+    df_jmf <- df %>%
+      filter(Region == r)
+
+    gemensamma_ar <- intersect(
+      unique(df_uppsala$År),
+      unique(df_jmf$År)
+    )
+
+    upp <- df_uppsala %>%
+      filter(År %in% gemensamma_ar)
+
+    jmf <- df_jmf %>%
+      filter(År %in% gemensamma_ar)
+
+    p <- ggplot() +
+
+      # Uppsala län
+      geom_ribbon(
+        data = upp,
+        aes(
+          x = År,
+          ymin = Konfidensintervall.nedre.gräns,
+          ymax = Konfidensintervall.övre.gräns,
+          fill = Frukt.och.grönt,
+          group = Frukt.och.grönt
+        ),
+        alpha = 0.3,
+        colour = NA
+      ) +
+
+      geom_line(
+        data = upp,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Frukt.och.grönt,
+          group = Frukt.och.grönt
+        ),
+        linewidth = 1.5
+      ) +
+
+      geom_point(
+        data = upp,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Frukt.och.grönt
+        ),
+        size = 2
+      ) +
+
+      # Jämförelseregion
+      geom_line(
+        data = jmf,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Frukt.och.grönt,
+          group = Frukt.och.grönt
+        ),
+        linewidth = 1.2,
+        linetype = "dashed"
+      ) +
+
+      facet_wrap(~Kön, ncol = 2) +
+
+      scale_color_manual(values = cols) +
+      scale_fill_manual(values = cols) +
+
+      scale_y_continuous(
+        breaks = seq(0, 100, by = 10),
+        limits = c(0, 100)
+      ) +
+
+      scale_x_discrete(breaks = c(min(gemensamma_ar), max(gemensamma_ar))) +
+
+      labs(
+        x = "",
+        title = str_wrap(
+          paste(
+            "Andel som äter frukt och grönt minst 2 gånger/dag – Uppsala län jämfört med",
+            r
+          ),
+          width = 50
+        ),
+        subtitle = paste("Streckade linjer visar", r),
+        caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+        y = "Andel (%)",
+        colour = "",
+        fill = ""
+      ) +
+
+      theme(
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(
+          hjust = 0.5,
+          colour = "#B81867",
+          face = "bold"
+        ),
+        axis.text.x = element_text(
+          angle = 45,
+          hjust = 1
+        ),
+        legend.position = "bottom"
+      ) +
+
+      guides(colour = guide_legend(nrow = 2))
+
     ggsave(
-      paste0("Figurer/frukt_gront_",r,".svg"),
+      paste0("Figurer/frukt_gront_", r, ".svg"),
       plot = p,
       width = 8,
       height = 6
     )
-    
+
     ggsave(
-      paste0("Figurer/frukt_gront_",r,".png"),
+      paste0("Figurer/frukt_gront_", r, ".png"),
       plot = p,
       width = 8,
       height = 6,
       dpi = 96
     )
   }
-  
-  
 }
 
 rokning <- function(){
@@ -144,10 +223,6 @@ rokning <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -163,7 +238,7 @@ rokning <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Andel dagligrökare – Uppsala län (4-årsmedelvärden)", width=50),
@@ -213,10 +288,6 @@ snus <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -232,7 +303,7 @@ snus <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Andel dagligsnusare – Uppsala län (4-årsmedelvärden)", width=50),
@@ -418,10 +489,6 @@ narkotika <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 2)]
-  
   # Färgschema
   kon_col <- c("#019CD7",
                "#E67E22")
@@ -437,7 +504,7 @@ narkotika <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Narkotikabruk per frekvens och kön – Uppsala län (4-årsmedelvärden)", width=50),
@@ -486,10 +553,6 @@ cannabis <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("#019CD7",
                "#E67E22")
@@ -505,7 +568,7 @@ cannabis <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Cannabisbruk per frekvens och kön – Uppsala län (4-årsmedelvärden)", width=50),

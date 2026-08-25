@@ -70,129 +70,294 @@ fysisk_aktivitet <- function(){
 
 
 stillasittande <- function(){
-  # Hämta data
+
   df <- na.omit(read.csv("Data/df_stillasittande.csv"))
-  
-  cols <- c("#F9B000" ,"#019CD7","#4AA271","#D57667" )
-  
+
+  cols <- c("#F9B000", "#019CD7", "#4AA271", "#D57667")
   names(cols) <- unique(df$Stillasittande)
-  
-  # Graf per region
+
+  # Uppsala län används som referens i alla figurer
+  df_uppsala <- df %>%
+    filter(Region == "Uppsala län")
+
   for(r in unique(df$Region)){
-    
-    temp <- df %>% filter(Region == r)
-    
-    # om tidsserien är tillräkligt lång
-    ara <- unique(temp$År)
-    visa_ar <- if(length(ara)> 6)ara[seq(1, length(ara), by = 2)]else ara
-    
-    # skapa plot 
-    p <- ggplot(temp, aes(x=År, y =Andel, color = Stillasittande, group=Stillasittande, fill=Stillasittande))+
-      geom_line(linewidth=1.5 )+facet_wrap(~Kön, ncol=2)+
-      geom_point(size=2)+
-      geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3) +
-      scale_color_manual(values = cols)+
-      scale_fill_manual(values = cols)+
-      scale_y_continuous(breaks = seq(0,50,by=5),
-                         limits = c(0,50))+
+
+    # Hoppa över Uppsala län mot sig själv
+    if(r == "Uppsala län") next
+
+    df_jmf <- df %>%
+      filter(Region == r)
+
+    # Matcha år så att båda serierna har samma tidsperiod
+    gemensamma_ar <- intersect(
+      unique(df_uppsala$År),
+      unique(df_jmf$År)
+    )
+
+    upp <- df_uppsala %>%
+      filter(År %in% gemensamma_ar)
+
+    jmf <- df_jmf %>%
+      filter(År %in% gemensamma_ar)
+
+    visa_ar <- gemensamma_ar
+
+    p <- ggplot() +
+
+      # Uppsala län
+      geom_ribbon(
+        data = upp,
+        aes(
+          x = År,
+          ymin = Konfidensintervall.nedre.gräns,
+          ymax = Konfidensintervall.övre.gräns,
+          fill = Stillasittande,
+          group = Stillasittande
+        ),
+        alpha = 0.3,
+        colour = NA
+      ) +
+      geom_line(
+        data = upp,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Stillasittande,
+          group = Stillasittande
+        ),
+        linewidth = 1.5
+      ) +
+      geom_point(
+        data = upp,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Stillasittande
+        ),
+        size = 2
+      ) +
+
+      # Jämförelseregion
+      geom_line(
+        data = jmf,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Stillasittande,
+          group = Stillasittande
+        ),
+        linewidth = 1.2,
+        linetype = "dashed"
+      ) +
+
+      facet_wrap(~Kön, ncol = 2) +
+
+      scale_color_manual(values = cols) +
+      scale_fill_manual(values = cols) +
+
+      scale_y_continuous(
+        breaks = seq(0, 50, by = 5),
+        limits = c(0, 50)
+      ) +
+
       scale_x_discrete(breaks = visa_ar) +
-      labs(x="",
-           title = str_wrap(paste("Fördelning av stillasittande tid per grupp –", r), width=50),
-           caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
-           y = "Andel (%)",
-           color="",
-           fill="")+
-      theme(plot.caption = element_text(hjust=0),
-            axis.text.x = element_text(angle =45, hjust=1),
-            legend.position = "bottom")+ 
-      guides(color = guide_legend(nrow = 2))
-    
-    
-    p
-    
-    # Sparar plot 
+
+      labs(
+        x = "",
+        title = str_wrap(
+          paste("Fördelning av stillasittande tid per grupp – Uppsala län jämfört med", r),
+          width = 50
+        ),
+        subtitle = paste("Streckade linjer visar", r),
+        caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+        y = "Andel (%)",
+        colour = "",
+        fill = ""
+      ) +
+
+      theme(
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(
+          hjust = 0.5,
+          colour = "#B81867",
+          face = "bold"
+        ),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom"
+      ) +
+
+      guides(colour = guide_legend(nrow = 2))
+
     ggsave(
-      paste0("Figurer/stillasittande_",r,".svg"),
+      paste0("Figurer/stillasittande_", r, ".svg"),
       plot = p,
       width = 8,
       height = 6
     )
-    
+
     ggsave(
-      paste0("Figurer/stillasittande_",r,".png"),
+      paste0("Figurer/stillasittande_", r, ".png"),
       plot = p,
       width = 8,
       height = 6,
       dpi = 96
     )
   }
-  
-  
 }
 
 
 obesitas <- function(){
-  # Läser in data
-  df <- read.csv("Data/df_obesitas.csv") %>% 
-    filter(Viktstatus..BMI. %in% c("Övervikt (BMI 25,0 - 29,9)","Obesitas (BMI 30,0 eller högre)",
-                                   "Undervikt (BMI 18,4 eller lägre)" ,"Normalvikt (BMI 18,5-24,9)"    ))
-  
-  cols <- c("#D57667" ,"#4AA271" , "#F9B000" , "#019CD7" ,
-            "#8B4A9C" , "#E67E22"  )
-  
+
+  df <- read.csv("Data/df_obesitas.csv") %>%
+    filter(
+      Viktstatus..BMI. %in% c(
+        "Övervikt (BMI 25,0 - 29,9)",
+        "Obesitas (BMI 30,0 eller högre)",
+        "Undervikt (BMI 18,4 eller lägre)",
+        "Normalvikt (BMI 18,5-24,9)"
+      )
+    )
+
+  cols <- c(
+    "#D57667",
+    "#4AA271",
+    "#F9B000",
+    "#019CD7"
+  )
+
   names(cols) <- unique(df$Viktstatus..BMI.)
-  
-  # Graf per region
+
+  # Referensregion
+  df_uppsala <- df %>%
+    filter(Region == "Uppsala län")
+
   for(r in unique(df$Region)){
-    
-    temp <- df %>% filter(Region == r)
-    
-    # om tidsserien är tillräkligt lång
-    ara <- unique(temp$År)
-    visa_ar <- if(length(ara)> 6)ara[seq(1, length(ara), by = 3)]else ara
-    
-    # skapa plot 
-    p <- ggplot(temp, aes(x=År, y =Andel, color = Viktstatus..BMI., group=Viktstatus..BMI., fill=Viktstatus..BMI.))+
-      geom_line(linewidth=1.5 )+facet_wrap(~Kön, ncol=2)+
-      geom_point(size=2)+
-      geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3) +
-      scale_color_manual(values = cols)+
-      scale_fill_manual(values = cols)+
-      scale_y_continuous(breaks = seq(0,100,by=10),
-                         limits = c(0,100))+
-      scale_x_discrete(breaks = visa_ar) +
-      labs(x="",
-           title = str_wrap(paste("Fördelning av viktstatus (BMI) –", r), width=50),
-           caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
-           y = "Andel (%)",
-           color="",
-           fill="")+
-      theme(plot.caption = element_text(hjust=0),
-            axis.text.x = element_text(angle =45, hjust=1),
-            legend.position = "bottom")+ 
-      guides(color = guide_legend(nrow = 2))
-    
-    
-    p
-    
-    # Sparar plot 
+
+    if(r == "Uppsala län") next
+
+    df_jmf <- df %>%
+      filter(Region == r)
+
+    gemensamma_ar <- intersect(
+      unique(df_uppsala$År),
+      unique(df_jmf$År)
+    )
+
+    upp <- df_uppsala %>%
+      filter(År %in% gemensamma_ar)
+
+    jmf <- df_jmf %>%
+      filter(År %in% gemensamma_ar)
+
+    p <- ggplot() +
+
+      # Uppsala län
+      geom_ribbon(
+        data = upp,
+        aes(
+          x = År,
+          ymin = Konfidensintervall.nedre.gräns,
+          ymax = Konfidensintervall.övre.gräns,
+          fill = Viktstatus..BMI.,
+          group = Viktstatus..BMI.
+        ),
+        alpha = 0.3,
+        colour = NA
+      ) +
+
+      geom_line(
+        data = upp,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Viktstatus..BMI.,
+          group = Viktstatus..BMI.
+        ),
+        linewidth = 1.5
+      ) +
+
+      geom_point(
+        data = upp,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Viktstatus..BMI.
+        ),
+        size = 2
+      ) +
+
+      # Jämförelseregion
+      geom_line(
+        data = jmf,
+        aes(
+          x = År,
+          y = Andel,
+          colour = Viktstatus..BMI.,
+          group = Viktstatus..BMI.
+        ),
+        linewidth = 1.2,
+        linetype = "dashed"
+      ) +
+
+      facet_wrap(~Kön, ncol = 2) +
+
+      scale_color_manual(values = cols) +
+      scale_fill_manual(values = cols) +
+
+      scale_y_continuous(
+        breaks = seq(0, 100, by = 10),
+        limits = c(0, 100)
+      ) +
+
+      scale_x_discrete(breaks = c(min(gemensamma_ar), max(gemensamma_ar))) +
+
+      labs(
+        x = "",
+        title = str_wrap(
+          paste(
+            "Fördelning av viktstatus (BMI) – Uppsala län jämfört med",
+            r
+          ),
+          width = 50
+        ),
+        subtitle = paste("Streckade linjer visar", r),
+        caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+        y = "Andel (%)",
+        colour = "",
+        fill = ""
+      ) +
+
+      theme(
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(
+          hjust = 0.5,
+          colour = "#B81867",
+          face = "bold"
+        ),
+        axis.text.x = element_text(
+          angle = 45,
+          hjust = 1
+        ),
+        legend.position = "bottom"
+      ) +
+
+      guides(colour = guide_legend(nrow = 2))
+
     ggsave(
-      paste0("Figurer/obesitas_",r,".svg"),
+      paste0("Figurer/obesitas_", r, ".svg"),
       plot = p,
       width = 8,
       height = 6
     )
-    
+
     ggsave(
-      paste0("Figurer/obesitas_",r,".png"),
+      paste0("Figurer/obesitas_", r, ".png"),
       plot = p,
       width = 8,
       height = 6,
       dpi = 96
     )
   }
-  
-  
 }
 
 undervikt <- function(){
@@ -210,7 +375,7 @@ undervikt <- function(){
     
     temp <- df %>% filter(Region == r)
     
-    # om tidsserien är tillräkligt lång
+    # om tidsserien är tillräckligt lång
     ara <- unique(temp$År)
     visa_ar <- if(length(ara)> 6)ara[seq(1, length(ara), by = 3)]else ara
     

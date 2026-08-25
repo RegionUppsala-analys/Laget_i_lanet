@@ -87,10 +87,6 @@ em_prak_stod <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -106,7 +102,7 @@ em_prak_stod <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Andel som saknar emotionellt respektive praktiskt stöd – Uppsala län (4-årsmedelvärden)", width=50),

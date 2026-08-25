@@ -79,8 +79,7 @@ sjalvrapporterad_halsa <- function(){
 }
 
 
-# livstillfresstallelse, barn
-
+# livstillfredsställelse, barn
 
 livstillfredsstallelse <- function(){
   # Läsa in data  

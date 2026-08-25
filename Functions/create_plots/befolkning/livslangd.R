@@ -234,67 +234,151 @@ livslangd_uppsalalan <- function(){
 
 
 
-# Livslängd kommuner:
+# Livslängd kommuner (jämfört med länet):
 
-livslangd_kom <- function(){
-  # Läser in data
-  df <- read.csv("Data/df_livslangd_kom.csv")
-  
-  # Färgschema
-  kon_col <- c("Män" = "#4AA271",
-               "Kvinnor" = "#D57667")
+  livslangd_kom <- function(){
 
-  # Sätter y-axel till det lägsta värdet och det högsta värdet avrundat till närmaste 2-tal
-  y_min <- floor(min(df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
-                   na.rm = TRUE))
+    # Kommundata
+    df <- read.csv("Data/df_livslangd_kom.csv")
 
-  y_max <- max(df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
-              na.rm = TRUE)
+    # Regiondata
+    df_region <- read.csv("Data/df_livslangd_region.csv") %>%
+      filter(Region == "Uppsala län")
 
-  y_max_axis <- (floor((y_max - y_min) / 2) + 1) * 2 + y_min
-
-  y_breaks <- seq(y_min, y_max_axis, by = 2)
-  
-  # En plot per kommun
-  for(r in kommuner){
-    temp <- df %>% filter(Region ==r)
-    
-    
-    p <- ggplot(temp, aes(x =År, y =  Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden., color=Kön, group=Kön))+
-      geom_line(linewidth=2)+ geom_point(size=3)+scale_color_manual(values = kon_col)+
-      scale_x_discrete(breaks = c(min(temp$År), max(temp$År))) +
-      scale_y_continuous(breaks = y_breaks, limits = c(y_min, y_max_axis))+
-      labs(x="",
-           title = str_wrap(paste("Medellivslängden i",r, "(5-årsmedelvärden)"), width=50),
-           caption = "Källa: SCB",
-           y = "Medellivslängd",
-           color="")+
-      theme(plot.caption = element_text(hjust=0))
-    
-    p
-    
-    
-    
-    # Sparar plot 
-    ggsave(
-      paste0("Figurer/livslangd_kom_",r,".svg"),
-      plot = p,
-      width = 8,
-      height = 6
+    # Färgschema
+    kon_col <- c(
+      "Män" = "#4AA271",
+      "Kvinnor" = "#D57667"
     )
-    
-    ggsave(
-      paste0("Figurer/livslangd_kom_",r,".png"),
-      plot = p,
-      width = 8,
-      height = 6,
-      dpi = 96
+
+    # Gemensam y-axel för alla figurer
+    y_min <- floor(
+      min(
+        c(
+          df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+          df_region$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.
+        ),
+        na.rm = TRUE
+      )
     )
-    
-    
-    
+
+    y_max <- max(
+      c(
+        df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+        df_region$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.
+      ),
+      na.rm = TRUE
+    )
+
+    y_max_axis <- (floor((y_max - y_min) / 2) + 1) * 2 + y_min
+
+    y_breaks <- seq(y_min, y_max_axis, by = 2)
+
+    for(r in kommuner){
+
+      kommun <- df %>%
+        filter(Region == r)
+
+      gemensamma_ar <- intersect(
+        unique(kommun$År),
+        unique(df_region$År)
+      )
+
+      kommun <- kommun %>%
+        filter(År %in% gemensamma_ar)
+
+      uppsala <- df_region %>%
+        filter(År %in% gemensamma_ar)
+
+      p <- ggplot() +
+
+        # Kommun
+        geom_line(
+          data = kommun,
+          aes(
+            x = År,
+            y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+            colour = Kön,
+            group = Kön
+          ),
+          linewidth = 2
+        ) +
+
+        geom_point(
+          data = kommun,
+          aes(
+            x = År,
+            y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+            colour = Kön
+          ),
+          size = 3
+        ) +
+
+        # Uppsala län
+        geom_line(
+          data = uppsala,
+          aes(
+            x = År,
+            y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+            colour = Kön,
+            group = Kön
+          ),
+          linewidth = 1.5,
+          linetype = "dashed"
+        ) +
+
+        scale_color_manual(values = kon_col) +
+
+        scale_x_discrete(
+          breaks = c(
+            min(gemensamma_ar),
+            max(gemensamma_ar)
+          )
+        ) +
+
+        scale_y_continuous(
+          breaks = y_breaks,
+          limits = c(y_min, y_max_axis)
+        ) +
+
+        labs(
+          x = "",
+          title = str_wrap(
+            paste(
+              "Medellivslängden i",
+              r,
+              "(5-årsmedelvärden)"
+            ),
+            width = 50
+          ),
+          subtitle = "Streckade linjer visar Uppsala län",
+          caption = "Källa: SCB",
+          y = "Medellivslängd",
+          color = ""
+        ) +
+
+        theme(
+          plot.caption = element_text(hjust = 0),
+          plot.subtitle = element_text(
+            hjust = 0.5,
+            colour = "#B81867",
+            face = "bold"
+          )
+        )
+
+      ggsave(
+        paste0("Figurer/livslangd_kom_", r, ".svg"),
+        plot = p,
+        width = 8,
+        height = 6
+      )
+
+      ggsave(
+        paste0("Figurer/livslangd_kom_", r, ".png"),
+        plot = p,
+        width = 8,
+        height = 6,
+        dpi = 96
+      )
+    }
   }
-  
-}
-
-

@@ -3,10 +3,6 @@ diabetes <- function(){
   # Läser in data
   df <- read.csv("Data/df_diabetes.csv") %>% filter(Ålder == "Totalt 25- åldersstandardiserad")
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 3)]
-  
   # Färger
   color_lan <- c("#019CD7","#E67E22",  "#4AA271" ,"#F9B000", "#8B4A9C", "#D57667","#6F787E"    )
   names(color_lan) <- unique(df$Region)
@@ -15,7 +11,7 @@ diabetes <- function(){
   p <- ggplot(df, aes(x= År, y=Diabetes.typ.två..nya.fall.efter.kön..region.och.år.,
                       color = Region, group=Region))+ 
     geom_line(linewidth=1.5)+ geom_point(size=2)+ facet_wrap(~Kön)+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     scale_color_manual(values= color_lan)+
     labs(x="",
          title = str_wrap("Nyregistrerade fall av typ 2-diabetes per 100 000 – Uppsala län (4-årsmedelvärden)", width=50),
@@ -48,75 +44,232 @@ diabetes <- function(){
   
 }
 
+
 hogt_blodtryck <- function(){
-  # Läser in data
-  df <- read.csv("Data/df_sjukdomar_besvar.csv") 
-  
-  df <- df[grepl("blodtryck", df$Sjukdomar.och.besvär),]
-  
-  # delar upp på region
-  df_rik <- df %>% filter(Region == "Riket")
-  
-  df <-  df %>% filter(Region == "Uppsala län")
-  
-  # Tar ut år för matchning
+
+  df <- read.csv("Data/df_sjukdomar_besvar.csv") %>%
+    filter(Sjukdomar.och.besvär == "Högt blodtryck")
+
+  df_rik <- df %>%
+    filter(Region == "Riket")
+
+  df <- df %>%
+    filter(Region == "Uppsala län")
+
   year <- df$År
-  
-  df_rik <- df_rik %>% filter(År %in% year)
-  
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
-  # Färgschema
-  kon_col <- c("Män" = "#4AA271",
-               "Kvinnor" = "#D57667")
-  
-  # skapa plot 
-  p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
-    geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Sjukdomar.och.besvär, ncol=2)+
-    geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
-    # Riket – streckad linje
-    geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
-              linewidth = 1, linetype = "dashed") +
-    scale_color_manual(values = kon_col)+
-    scale_fill_manual(values = kon_col)+
-    scale_y_continuous(breaks = seq(0,100,by=10),
-                       limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
-    
-    labs(x="",
-         title = str_wrap("Andel med högt blodtryck – Uppsala län (4-årsmedelvärden)", width=50),
-         caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
-         y = "Andel (%)",
-         color="",
-         fill="",
-         subtitle = str_wrap("Streckade linjer är Riksandelen", width = 50))+
-    theme(plot.caption = element_text(hjust=0),
-          plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold'),
-          axis.text.x = element_text(angle = -45, hjust=0))
-  
-  p
-  
-  # Sparar plot 
-  ggsave(
-    paste0("Figurer/blodtryck.svg"),
-    plot = p,
-    width = 8,
-    height = 7
+
+  df_rik <- df_rik %>%
+    filter(År %in% year)
+
+  kon_col <- c(
+    "Män" = "#4AA271",
+    "Kvinnor" = "#D57667"
   )
-  
-  ggsave(
-    paste0("Figurer/blodtryck.png"),
-    plot = p,
-    width = 8,
-    height = 7,
-    dpi = 96
-  )
-  
-  
-  
+
+  p <- ggplot(df,
+              aes(x = År, y = Andel,
+                  group = Kön,
+                  color = Kön,
+                  fill = Kön)) +
+    geom_line(linewidth = 1.5) +
+    geom_point(size = 2) +
+    geom_ribbon(
+      aes(
+        ymin = Konfidensintervall.nedre.gräns,
+        ymax = Konfidensintervall.övre.gräns
+      ),
+      alpha = 0.3,
+      colour = NA
+    ) +
+    geom_line(
+      data = df_rik,
+      aes(x = År, y = Andel,
+          group = Kön, color = Kön),
+      linewidth = 1,
+      linetype = "dashed"
+    ) +
+    scale_color_manual(values = kon_col) +
+    scale_fill_manual(values = kon_col) +
+    scale_y_continuous(
+      breaks = seq(0, 100, by = 10),
+      limits = c(0, 100)
+    ) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    labs(
+      x = "",
+      title = str_wrap("Andel med högt blodtryck – Uppsala län (4-årsmedelvärden)", width=50),
+      subtitle = str_wrap("Streckade linjer är riksandelen", width=50),
+      caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+      y = "Andel (%)",
+      color = "",
+      fill = ""
+    ) +
+
+    theme(
+      plot.caption = element_text(hjust = 0),
+      plot.subtitle = element_text(
+        hjust = 0.5,
+        color = "#B81867",
+        face = "bold"
+      ),
+      axis.text.x = element_text(
+        angle = -45,
+        hjust = 0
+      )
+    )
+
+  ggsave("Figurer/hogt_blodtryck.svg", p, width = 8, height = 6)
+  ggsave("Figurer/hogt_blodtryck.png", p, width = 8, height = 6, dpi = 96)
 }
+
+
+
+
+blodtryck_besvar <- function(){
+
+  df <- read.csv("Data/df_sjukdomar_besvar.csv") %>%
+    filter(Sjukdomar.och.besvär == "Besvär av högt blodtryck")
+
+  df_rik <- df %>%
+    filter(Region == "Riket")
+
+  df <- df %>%
+    filter(Region == "Uppsala län")
+
+  year <- df$År
+
+  df_rik <- df_rik %>%
+    filter(År %in% year)
+
+  kon_col <- c(
+    "Män" = "#4AA271",
+    "Kvinnor" = "#D57667"
+  )
+
+  p <- ggplot(df,
+              aes(x = År, y = Andel,
+                  group = Kön,
+                  color = Kön,
+                  fill = Kön)) +
+    geom_line(linewidth = 1.5) +
+    geom_point(size = 2) +
+    geom_ribbon(
+      aes(
+        ymin = Konfidensintervall.nedre.gräns,
+        ymax = Konfidensintervall.övre.gräns
+      ),
+      alpha = 0.3,
+      colour = NA
+    ) +
+    geom_line(
+      data = df_rik,
+      aes(x = År, y = Andel,
+          group = Kön, color = Kön),
+      linewidth = 1,
+      linetype = "dashed"
+    ) +
+    scale_color_manual(values = kon_col) +
+    scale_fill_manual(values = kon_col) +
+    scale_y_continuous(
+      breaks = seq(0, 100, by = 10),
+      limits = c(0, 100)
+    ) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+
+  labs(
+    x = "",
+    title = str_wrap("Andel med besvär av högt blodtryck – Uppsala län (4-årsmedelvärden)", width=50),
+    subtitle = str_wrap("Streckade linjer är riksandelen", width=50),
+    caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+    y = "Andel (%)",
+    color = "",
+    fill = ""
+  ) +
+
+  theme(plot.caption = element_text(hjust=0),
+          plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold'),
+          axis.text.x = element_text(angle = 45, hjust=1))
+
+  ggsave("Figurer/blodtryck_besvar.svg", p, width = 8, height = 6)
+  ggsave("Figurer/blodtryck_besvar.png", p, width = 8, height = 6, dpi = 96)
+}
+
+
+blodtryck_svara_besvar <- function(){
+
+  df <- read.csv("Data/df_sjukdomar_besvar.csv") %>%
+    filter(Sjukdomar.och.besvär == "Svåra besvär av högt blodtryck")
+
+  df_rik <- df %>%
+    filter(Region == "Riket")
+
+  df <- df %>%
+    filter(Region == "Uppsala län")
+
+  year <- df$År
+
+  df_rik <- df_rik %>%
+    filter(År %in% year)
+
+  kon_col <- c(
+    "Män" = "#4AA271",
+    "Kvinnor" = "#D57667"
+  )
+
+  p <- ggplot(df,
+              aes(x = År, y = Andel,
+                  group = Kön,
+                  color = Kön,
+                  fill = Kön)) +
+  geom_line(linewidth = 1.5) +
+  geom_point(size = 2) +
+  geom_ribbon(
+    aes(
+      ymin = Konfidensintervall.nedre.gräns,
+      ymax = Konfidensintervall.övre.gräns
+    ),
+    alpha = 0.3,
+    colour = NA
+  ) +
+  geom_line(
+    data = df_rik,
+    aes(x = År, y = Andel,
+        group = Kön, color = Kön),
+    linewidth = 1,
+    linetype = "dashed"
+  ) +
+  scale_color_manual(values = kon_col) +
+  scale_fill_manual(values = kon_col) +
+  scale_y_continuous(
+    breaks = seq(0, 100, by = 10),
+    limits = c(0, 100)
+  ) +
+  scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+
+  labs(
+    x = "",
+    title = str_wrap("Andel med svåra besvär av högt blodtryck – Uppsala län (4-årsmedelvärden)", width=50),
+    subtitle = str_wrap("Streckade linjer är riksandelen", width=50),
+    caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+    y = "Andel (%)",
+    color = "",
+    fill = ""
+  ) +
+
+  theme(plot.caption = element_text(hjust=0),
+          plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold'),
+          axis.text.x = element_text(angle = 45, hjust=1))
+
+  ggsave("Figurer/blodtryck_svara_besvar.svg", p, width = 8, height = 6)
+  ggsave("Figurer/blodtryck_svara_besvar.png", p, width = 8, height = 6, dpi = 96)
+}
+
+
+
+
+
+
+
 
 allergi <- function(){
   # Läser in data
@@ -136,10 +289,6 @@ allergi <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -155,8 +304,8 @@ allergi <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
-    
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+
     labs(x="",
          title = str_wrap("Andel med allergibesvär – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
@@ -208,10 +357,6 @@ astma <- function(){
   
   df_rik <- df_rik %>% filter(År %in% year)
   
-  # Visa vart 5:e år på x-axeln
-  ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 4)]
-  
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
@@ -227,7 +372,7 @@ astma <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
     
     labs(x="",
          title = str_wrap("Andel med astmabesvär – Uppsala län (4-årsmedelvärden)", width=50),
@@ -265,10 +410,9 @@ astma <- function(){
 huvudvark_tinnitus <- function(){
   # Läser in data
   df <- read.csv("Data/df_sjukdomar_besvar.csv") %>% 
-    filter(Sjukdomar.och.besvär %in% c("Huvudvärk","Svår huvudvärk" ,
-                                       "Tinnitus" ,"Svåra besvär av tinnitus" ,
-                                       "Yrsel" , "Svåra besvär av yrsel"))
-  
+    filter(Sjukdomar.och.besvär %in% c("Huvudvärk",
+                                       "Tinnitus" ,
+                                       "Yrsel"))
   
   # delar upp på region
   df_rik <- df %>% filter(Region == "Riket")
@@ -290,10 +434,6 @@ huvudvark_tinnitus <- function(){
     
     temp_r <- temp_r %>% filter(År %in% year)
     
-    # Visa vart 5:e år på x-axeln
-    ara <- unique(temp$År)
-    visa_ar <- ara[seq(1, length(ara), by = 1)]
-    
     # Om det är väldigt låga värden
     y_limits <- ifelse(max(temp$Andel) < 5,10,100 )
     
@@ -308,7 +448,7 @@ huvudvark_tinnitus <- function(){
       scale_fill_manual(values = kon_col)+
       scale_y_continuous(breaks = seq(0,y_limits,by=10),
                          limits = c(0,y_limits))+
-      scale_x_discrete(breaks = visa_ar) +
+      scale_x_discrete(breaks = c(min(temp$År), max(temp$År))) +
       labs(x="",
            title = str_wrap(paste("Andel med", str_to_lower(t), "– Uppsala län (4-årsmedelvärden)"), width=50),
            caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
