@@ -140,71 +140,88 @@ livslangd <- function(){
 }
 
 
-
-livslangd_tid <- function(){
+livslangd_uppsalalan <- function(){
   # Läser in data
-  df <- read.csv('Data/df_livslangd.csv') 
+  df <- read.csv('Data/df_livslangd.csv')
   
   # Filtrerar och fixar till snyggare variabler
-  df_plot <- df %>% filter( ålder == '30 år', utbildningsnivå != "samtliga utbildningsnivåer") %>% 
-    select(region, utbildningsnivå, kön , ålder, Antal.återstående.år,årsintervall) %>%
+  df_plot <- df %>% 
+    filter(
+      ålder == "30 år",
+      !utbildningsnivå %in% c(
+        "samtliga utbildningsnivåer",
+        "uppgift om utbildningsnivå saknas"
+      ),
+      region %in% c("Riket", "Uppsala län")
+    ) %>% 
+    select(region, utbildningsnivå, kön, ålder,
+          Antal.återstående.år, årsintervall) %>%
     mutate(
-      utbildningsnivå = str_to_title(utbildningsnivå),
-      kön = str_to_title(kön),
-      årsintervall = factor(årsintervall, levels = sort(unique(årsintervall))))
-  
-  
-  df_plot$utbildningsnivå[df_plot$utbildningsnivå =="Uppgift Om Utbildningsnivå Saknas"] <- 'Uppgift Saknas'
-  
-  
-  # Färgtema
-  col_map <- c(
-    "Förgymnasial Utbildning" = "#D57667",
-    "Gymnasial Utbildning" = "#F9B000",
-    "Eftergymnasial Utbildning" = "#019CD7",
-    "Uppgift Saknas" = "#4AA271"
+      utbildningsnivå = recode(utbildningsnivå,
+        "förgymnasial utbildning" = "Förgymnasial",
+        "gymnasial utbildning" = "Gymnasial",
+        "eftergymnasial utbildning" = "Eftergymnasial"
+      ),
+      kön = str_to_title(kön)
+    )
+
+  # Senaste tillgängliga årsintervallet
+  senaste_period <- max(df_plot$årsintervall)
+
+  df_plot <- df_plot %>%
+    filter(årsintervall == senaste_period)
+
+  # Färger för regioner
+  col_region <- c(
+    "Riket" = "#019CD7",
+    "Uppsala län" = "#D57667"
   )
-  
-  # Tidsserieplot för närliggande regioner
-  
-  for(r in unique(df_plot$region)){
-    # filtrerar ut data
-    temp <- df_plot %>% filter(region == r)
-    
-    # Endast riket ska visa uppgift saknas
-    if(r != "Riket"){
-      temp <- temp %>% filter(utbildningsnivå != "Uppgift Saknas")
-      
-    }
-    
-    
-    p <- ggplot(temp, aes(x=årsintervall, y=Antal.återstående.år, color= utbildningsnivå, group =utbildningsnivå ))+
-      geom_line(linewidth=2)+ geom_point(size=3)+ facet_wrap(~kön, ncol=1)+
-      scale_color_manual(values = col_map)+ 
-      labs(title=str_wrap(paste("Återstående medellivslängd från 30, per utbildningsnivå i",r), width=50),
-           x ="",
-           y="Antal återstående år",
-           color="",
-           caption = "Källa: SCB")+
-      theme(axis.text.x = element_text(angle=45, hjust=1),
-            legend.position = "bottom",
-            plot.caption = element_text(hjust=0))+ 
-      guides(color = guide_legend(nrow = 2)) 
-    
-    
-    
-    p
+
+  levels_x <- c("Förgymnasial", "Gymnasial", "Eftergymnasial")
+  levels_fill <- c("Uppsala län", "Riket")
+
+  p <- ggplot(
+    df_plot,
+    aes(
+      x = factor(utbildningsnivå, levels = levels_x),
+      y = Antal.återstående.år,
+      fill = factor(region, levels = levels_fill)
+    )
+  ) +
+    geom_col(
+      position = position_dodge(width = 0.8),
+      width = 0.7
+    ) +
+    facet_wrap(~ kön, ncol = 2) +
+    scale_fill_manual(values = col_region) +
+    labs(
+      title = str_wrap(paste(
+        "Återstående medellivslängd från 30 års ålder",
+        senaste_period, "utifrån utbildningsnivå"
+      ), width = 50),
+      subtitle = str_wrap("Jämförelse mellan Uppsala län och Riket", width = 50),
+      x = "",
+      y = "Antal återstående år",
+      fill = "",
+      caption = "Källa: SCB"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 20, hjust = 1),
+      legend.position = "bottom",
+      plot.caption = element_text(hjust = 0),
+      plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold')
+    )
     
     # Sparar plot 
     ggsave(
-      paste0("Figurer/livslangd_",r,".svg"),
+      paste0("Figurer/livslangd_uppsalalan.svg"),
       plot = p,
       width = 8,
       height = 7
     )
     
     ggsave(
-      paste0("Figurer/livslangd_",r,".png"),
+      paste0("Figurer/livslangd_uppsalalan.png"),
       plot = p,
       width = 8,
       height = 7,
@@ -214,10 +231,8 @@ livslangd_tid <- function(){
     
     
   } 
-  
-  
-  
-}
+
+
 
 # Livslängd kommuner:
 
@@ -229,9 +244,20 @@ livslangd_kom <- function(){
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
   
-  # Visa vart 5:e år på x-axeln
+  # Visa vart 4:e år på x-axeln
   ara <- unique(df$År)
-  visa_ar <- ara[seq(1, length(ara), by = 3)]
+  visa_ar <- ara[seq(1, length(ara), by = 2)]
+
+  # Sätter y-axel till det lägsta värdet och det högsta värdet avrundat till närmaste 2-tal
+  y_min <- floor(min(df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+                   na.rm = TRUE))
+
+  y_max <- max(df$Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+              na.rm = TRUE)
+
+  y_max_axis <- (floor((y_max - y_min) / 2) + 1) * 2 + y_min
+
+  y_breaks <- seq(y_min, y_max_axis, by = 2)
   
   # En plot per kommun
   for(r in kommuner){
@@ -241,6 +267,7 @@ livslangd_kom <- function(){
     p <- ggplot(temp, aes(x =År, y =  Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden., color=Kön, group=Kön))+
       geom_line(linewidth=2)+ geom_point(size=3)+scale_color_manual(values = kon_col)+
       scale_x_discrete(breaks = visa_ar) +
+      scale_y_continuous(breaks = y_breaks, limits = c(y_min, y_max_axis))+
       labs(x="",
            title = str_wrap(paste("Medellivslängden i",r, "(5-årsmedelvärden)"), width=50),
            caption = "Källa: SCB",
