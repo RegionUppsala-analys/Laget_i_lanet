@@ -20,11 +20,26 @@ fysisk_aktivitet <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  # etikettdata
+  etiketter <- df %>%
+  group_by(Kön) %>%
+  filter(År == max(År)) %>%
+  ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(
+      data = etiketter,
+      aes(label = round(Andel, 1)),
+      direction = "y",
+      nudge_x = 0.3,
+      hjust = 0,
+      segment.color = NA,
+      show.legend = FALSE
+      ) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -32,7 +47,10 @@ fysisk_aktivitet <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(
+      breaks = visa_ar,
+      expand = expansion(mult = c(0.02, 0.10))
+    ) +
     
     labs(x="",
          title = str_wrap("Andel fysiskt aktiva i minst 150 min/vecka – Uppsala län (4-årsmedelvärden)", width=50),
@@ -100,6 +118,11 @@ stillasittande <- function(){
     jmf <- df_jmf %>%
       filter(År %in% gemensamma_ar)
 
+    etiketter <- upp %>%
+      group_by(Kön, Stillasittande) %>%
+      filter(År == max(År)) %>%
+      ungroup()
+
     visa_ar <- gemensamma_ar
 
     p <- ggplot() +
@@ -136,6 +159,15 @@ stillasittande <- function(){
         ),
         size = 2
       ) +
+      geom_text_repel(
+        data = etiketter,
+        aes(label = round(Andel, 1)),
+        direction = "y",
+        nudge_x = 0.3,
+        hjust = 0,
+        segment.color = NA,
+        show.legend = FALSE
+      ) +
 
       # Jämförelseregion
       geom_line(
@@ -160,7 +192,10 @@ stillasittande <- function(){
         limits = c(0, 50)
       ) +
 
-      scale_x_discrete(breaks = visa_ar) +
+      scale_x_discrete(
+        breaks = visa_ar,
+        expand = expansion(mult = c(0.02, 0.10))
+      ) +
 
       labs(
         x = "",
@@ -249,6 +284,11 @@ obesitas <- function(){
     jmf <- df_jmf %>%
       filter(År %in% gemensamma_ar)
 
+    etiketter <- upp %>%
+      group_by(Kön, Viktstatus..BMI.) %>%
+      filter(År == max(År)) %>%
+      ungroup()
+
     p <- ggplot() +
 
       # Uppsala län
@@ -285,6 +325,15 @@ obesitas <- function(){
         ),
         size = 2
       ) +
+      geom_text_repel(
+        data = etiketter,
+        aes(label = round(Andel, 1)),
+        direction = "y",
+        nudge_x = 0.3,
+        hjust = 0,
+        segment.color = NA,
+        show.legend = FALSE
+      ) +
 
       # Jämförelseregion
       geom_line(
@@ -309,7 +358,10 @@ obesitas <- function(){
         limits = c(0, 100)
       ) +
 
-      scale_x_discrete(breaks = c(min(gemensamma_ar), max(gemensamma_ar))) +
+      scale_x_discrete(
+        breaks = c(min(gemensamma_ar), max(gemensamma_ar)),
+        expand = expansion(mult = c(0.02, 0.10))
+      ) +
 
       labs(
         x = "",
@@ -378,17 +430,34 @@ undervikt <- function(){
     # om tidsserien är tillräckligt lång
     ara <- unique(temp$År)
     visa_ar <- if(length(ara)> 6)ara[seq(1, length(ara), by = 3)]else ara
+
+    etiketter <- temp %>%
+      group_by(Kön, Viktstatus..BMI.) %>%
+      filter(År == max(År)) %>%
+      ungroup()
     
     # skapa plot 
     p <- ggplot(temp, aes(x=År, y =Andel, color = Viktstatus..BMI., group=Viktstatus..BMI., fill=Viktstatus..BMI.))+
       geom_line(linewidth=1.5 )+facet_wrap(~Kön, ncol=2)+
       geom_point(size=2)+
       geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3) +
+      geom_text_repel(
+        data = etiketter,
+        aes(label = round(Andel, 1)),
+        direction = "y",
+        nudge_x = 0.3,
+        hjust = 0,
+        segment.color = NA,
+        show.legend = FALSE
+      ) +
       scale_color_manual(values = cols)+
       scale_fill_manual(values = cols)+
       scale_y_continuous(breaks = seq(0,10,by=1),
                          limits = c(0,10))+
-      scale_x_discrete(breaks = visa_ar) +
+      scale_x_discrete(
+        breaks = visa_ar,
+        expand = expansion(mult = c(0.02, 0.10))
+      ) +
       labs(x="",
            title = str_wrap(paste("Andel underviktiga (BMI < 18,5) –", r), width=50),
            caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",

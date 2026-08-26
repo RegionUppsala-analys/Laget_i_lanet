@@ -8,15 +8,24 @@ psykist_valbefinnande <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == tail(levels(År), 1)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y = Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = Konfidensintervall.nedre.gräns, ymax = Konfidensintervall.övre.gräns), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     scale_color_manual(values = kon_col)+
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=20),
                        limits = c(0,100))+
+    scale_x_discrete(expand = expansion(mult = c(0.02, 0.10))) +
     labs(x="",
          title = str_wrap("Andel med gott eller mycket gott psykiskt välbefinnande – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
@@ -55,15 +64,24 @@ psykisk_pafrestning <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == tail(levels(År), 1)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y = Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = Konfidensintervall.nedre.gräns, ymax = Konfidensintervall.övre.gräns), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     scale_color_manual(values = kon_col)+
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=20),
                        limits = c(0,100))+
+    scale_x_discrete(expand = expansion(mult = c(0.02, 0.10))) +
     labs(x="",
          title = str_wrap("Andel med allvarlig psykisk påfrestning – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
@@ -110,11 +128,19 @@ Psykisk_stress <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall nedre gräns`, ymax = `Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -122,7 +148,8 @@ Psykisk_stress <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     labs(x="",
          title = str_wrap("Andel stressade – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",
@@ -178,16 +205,25 @@ svar_psykisk_stress <-  function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall nedre gräns`, ymax = `Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     scale_color_manual(values = kon_col)+
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     labs(x="",
          title = str_wrap("Andel mycket stressade – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",

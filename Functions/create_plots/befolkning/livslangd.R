@@ -290,6 +290,11 @@ livslangd_uppsalalan <- function(){
       uppsala <- df_region %>%
         filter(År %in% gemensamma_ar)
 
+      etiketter <- kommun %>%
+      group_by(Kön) %>%
+      filter(År == max(År)) %>%
+      ungroup()
+
       p <- ggplot() +
 
         # Kommun
@@ -314,6 +319,23 @@ livslangd_uppsalalan <- function(){
           size = 3
         ) +
 
+        geom_text(
+          data = etiketter,
+          aes(
+            x = År,
+            y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+            label = round(
+              Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+              1
+            ),
+            colour = Kön
+          ),
+          hjust = -0.5,
+          size = 4,
+          fontface = "bold",
+          show.legend = FALSE
+        ) + 
+
         # Uppsala län
         geom_line(
           data = uppsala,
@@ -333,7 +355,8 @@ livslangd_uppsalalan <- function(){
           breaks = c(
             min(gemensamma_ar),
             max(gemensamma_ar)
-          )
+          ),
+          expand = expansion(mult = c(0.02, 0.1))
         ) +
 
         scale_y_continuous(

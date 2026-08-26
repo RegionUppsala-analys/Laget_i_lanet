@@ -33,6 +33,11 @@ suicid <- function(){
     uppsala <- df_region %>%
       filter(År %in% gemensamma_ar)
 
+    etiketter <- kommun %>%
+      group_by(Kön) %>%
+      filter(År == max(År)) %>%
+      ungroup()
+
     p <- ggplot() +
 
       # Kommun (heldragen)
@@ -56,6 +61,15 @@ suicid <- function(){
         ),
         size = 3
       ) +
+      geom_text_repel(
+        data = etiketter,
+        aes(label = round(X25..åldersstandardiserad, 1)),
+        direction = "y",
+        nudge_x = 0.3,
+        hjust = 0,
+        segment.color = NA,
+        show.legend = FALSE
+      ) +
 
       # Uppsala län (streckad)
       geom_line(
@@ -73,7 +87,8 @@ suicid <- function(){
       scale_color_manual(values = kon_col) +
 
       scale_x_discrete(
-        breaks = c(min(gemensamma_ar), max(gemensamma_ar))
+        breaks = c(min(gemensamma_ar), max(gemensamma_ar)),
+        expand = expansion(mult = c(0.02, 0.10))
       ) +
 
       scale_y_continuous(

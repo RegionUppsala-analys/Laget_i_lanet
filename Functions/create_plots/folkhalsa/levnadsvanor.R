@@ -11,6 +11,11 @@ alkohol <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
@@ -20,6 +25,9 @@ alkohol <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -27,7 +35,8 @@ alkohol <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel riskkonsumenter av alkohol – Uppsala län (4-årsmedelvärden)", width=50),
@@ -97,6 +106,11 @@ frukt_gront <- function(){
     jmf <- df_jmf %>%
       filter(År %in% gemensamma_ar)
 
+    etiketter <- upp %>%
+      group_by(Kön, Frukt.och.grönt) %>%
+      filter(År == max(År)) %>%
+      ungroup()
+
     p <- ggplot() +
 
       # Uppsala län
@@ -133,6 +147,15 @@ frukt_gront <- function(){
         ),
         size = 2
       ) +
+      geom_text_repel(
+        data = etiketter,
+        aes(label = round(Andel, 1)),
+        direction = "y",
+        nudge_x = 0.3,
+        hjust = 0,
+        segment.color = NA,
+        show.legend = FALSE
+      ) +
 
       # Jämförelseregion
       geom_line(
@@ -157,7 +180,10 @@ frukt_gront <- function(){
         limits = c(0, 100)
       ) +
 
-      scale_x_discrete(breaks = c(min(gemensamma_ar), max(gemensamma_ar))) +
+      scale_x_discrete(
+        breaks = c(min(gemensamma_ar), max(gemensamma_ar)),
+        expand = expansion(mult = c(0.02, 0.10))
+      ) +
 
       labs(
         x = "",
@@ -222,6 +248,11 @@ rokning <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
@@ -231,6 +262,9 @@ rokning <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -238,7 +272,8 @@ rokning <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel dagligrökare – Uppsala län (4-årsmedelvärden)", width=50),
@@ -287,6 +322,11 @@ snus <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
@@ -296,6 +336,9 @@ snus <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -303,7 +346,8 @@ snus <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel dagligsnusare – Uppsala län (4-årsmedelvärden)", width=50),
@@ -351,6 +395,11 @@ dryck <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Visa vart 5:e år på x-axeln
   ara <- unique(df$År)
@@ -364,6 +413,9 @@ dryck <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -371,7 +423,8 @@ dryck <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = visa_ar,
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel som dricker sötad dryck minst 2 gånger/vecka – Uppsala län (4-årsmedelvärden)", width=50),
@@ -419,6 +472,11 @@ spel <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Visa vart 5:e år på x-axeln
   ara <- unique(df$År)
@@ -432,6 +490,9 @@ spel <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -439,7 +500,8 @@ spel <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,20,by=10),
                        limits = c(0,20))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = visa_ar,
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel med riskabelt spelande – Uppsala län (4-årsmedelvärden)", width=50),
@@ -488,6 +550,11 @@ narkotika <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön, Frekvens) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("#019CD7",
@@ -497,6 +564,9 @@ narkotika <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Frekvens, color =Frekvens, fill=Frekvens))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Kön)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Frekvens, color = Frekvens),
               linewidth = 1, linetype = "dashed") +
@@ -504,7 +574,8 @@ narkotika <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Narkotikabruk per frekvens och kön – Uppsala län (4-årsmedelvärden)", width=50),
@@ -552,6 +623,11 @@ cannabis <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön, Använt.cannabis) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("#019CD7",
@@ -561,6 +637,9 @@ cannabis <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Använt.cannabis, color =Använt.cannabis, fill=Använt.cannabis))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Kön)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Använt.cannabis, color = Använt.cannabis),
               linewidth = 1, linetype = "dashed") +
@@ -568,7 +647,8 @@ cannabis <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Cannabisbruk per frekvens och kön – Uppsala län (4-årsmedelvärden)", width=50),

@@ -22,11 +22,19 @@ somn <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y = Sömnbesvär_Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5) + geom_point(size=2)+
     geom_ribbon(aes(ymin = `Sömnbesvär_Konfidensintervall nedre gräns`, ymax = `Sömnbesvär_Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Sömnbesvär_Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Sömnbesvär_Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -34,7 +42,8 @@ somn <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=20),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel med sömnbesvär – Uppsala län (4-årsmedelvärden)", width=50),
@@ -88,11 +97,19 @@ svara_somn <-  function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y = Svåra.sömnbesvär_Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Svåra.sömnbesvär_Konfidensintervall nedre gräns`, ymax = `Svåra.sömnbesvär_Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Svåra.sömnbesvär_Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Svåra.sömnbesvär_Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -100,7 +117,8 @@ svara_somn <-  function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel med svåra sömnbesvär – Uppsala län (4-årsmedelvärden)", width=50),
@@ -157,11 +175,19 @@ oro_angest <-  function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall nedre gräns`, ymax = `Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -169,7 +195,8 @@ oro_angest <-  function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel med ängslan, oro eller ångest – Uppsala län (4-årsmedelvärden)", width=50),
@@ -225,16 +252,25 @@ svar_oro_angest <-  function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall nedre gräns`, ymax = `Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     scale_color_manual(values = kon_col)+
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     labs(x="",
          title = str_wrap("Andel med svåra besvär av ängslan, oro eller ångest – Uppsala län (4-årsmedelvärden)", width=50),
          caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",

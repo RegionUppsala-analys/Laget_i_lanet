@@ -2,6 +2,11 @@
 diabetes <- function(){
   # Läser in data
   df <- read.csv("Data/df_diabetes.csv") %>% filter(Ålder == "Totalt 25- åldersstandardiserad")
+
+  etiketter <- df %>%
+    group_by(Kön, Region) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färger
   color_lan <- c("#019CD7","#E67E22",  "#4AA271" ,"#F9B000", "#8B4A9C", "#D57667","#6F787E"    )
@@ -11,7 +16,11 @@ diabetes <- function(){
   p <- ggplot(df, aes(x= År, y=Diabetes.typ.två..nya.fall.efter.kön..region.och.år.,
                       color = Region, group=Region))+ 
     geom_line(linewidth=1.5)+ geom_point(size=2)+ facet_wrap(~Kön)+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    geom_text_repel(data = etiketter, aes(label = round(Diabetes.typ.två..nya.fall.efter.kön..region.och.år., 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     scale_color_manual(values= color_lan)+
     labs(x="",
          title = str_wrap("Nyregistrerade fall av typ 2-diabetes per 100 000 – Uppsala län (4-årsmedelvärden)", width=50),
@@ -66,6 +75,11 @@ hogt_blodtryck <- function(){
     "Kvinnor" = "#D57667"
   )
 
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
+
   p <- ggplot(df,
               aes(x = År, y = Andel,
                   group = Kön,
@@ -81,6 +95,9 @@ hogt_blodtryck <- function(){
       alpha = 0.3,
       colour = NA
     ) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+                    direction = "y", nudge_x = 0.3, hjust = 0,
+                    segment.color = NA, show.legend = FALSE) +
     geom_line(
       data = df_rik,
       aes(x = År, y = Andel,
@@ -94,7 +111,8 @@ hogt_blodtryck <- function(){
       breaks = seq(0, 100, by = 10),
       limits = c(0, 100)
     ) +
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     labs(
       x = "",
       title = str_wrap("Andel med högt blodtryck – Uppsala län (4-årsmedelvärden)", width=50),
@@ -146,6 +164,11 @@ blodtryck_besvar <- function(){
     "Kvinnor" = "#D57667"
   )
 
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
+
   p <- ggplot(df,
               aes(x = År, y = Andel,
                   group = Kön,
@@ -161,6 +184,9 @@ blodtryck_besvar <- function(){
       alpha = 0.3,
       colour = NA
     ) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+                    direction = "y", nudge_x = 0.3, hjust = 0,
+                    segment.color = NA, show.legend = FALSE) +
     geom_line(
       data = df_rik,
       aes(x = År, y = Andel,
@@ -174,7 +200,8 @@ blodtryck_besvar <- function(){
       breaks = seq(0, 100, by = 10),
       limits = c(0, 100)
     ) +
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
 
   labs(
     x = "",
@@ -216,6 +243,11 @@ blodtryck_svara_besvar <- function(){
     "Kvinnor" = "#D57667"
   )
 
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
+
   p <- ggplot(df,
               aes(x = År, y = Andel,
                   group = Kön,
@@ -231,6 +263,9 @@ blodtryck_svara_besvar <- function(){
     alpha = 0.3,
     colour = NA
   ) +
+  geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+                  direction = "y", nudge_x = 0.3, hjust = 0,
+                  segment.color = NA, show.legend = FALSE) +
   geom_line(
     data = df_rik,
     aes(x = År, y = Andel,
@@ -244,7 +279,8 @@ blodtryck_svara_besvar <- function(){
     breaks = seq(0, 100, by = 10),
     limits = c(0, 100)
   ) +
-  scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+  scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+                   expand = expansion(mult = c(0.02, 0.10))) +
 
   labs(
     x = "",
@@ -292,11 +328,19 @@ allergi <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön, Sjukdomar.och.besvär) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Sjukdomar.och.besvär, ncol=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -304,7 +348,8 @@ allergi <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
 
     labs(x="",
          title = str_wrap("Andel med allergibesvär – Uppsala län (4-årsmedelvärden)", width=50),
@@ -360,11 +405,19 @@ astma <- function(){
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
                "Kvinnor" = "#D57667")
+
+  etiketter <- df %>%
+    group_by(Kön, Sjukdomar.och.besvär) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Sjukdomar.och.besvär, ncol=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -372,7 +425,8 @@ astma <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel med astmabesvär – Uppsala län (4-årsmedelvärden)", width=50),
@@ -433,6 +487,11 @@ huvudvark_tinnitus <- function(){
     year <- temp$År
     
     temp_r <- temp_r %>% filter(År %in% year)
+
+    etiketter <- temp %>%
+      group_by(Kön) %>%
+      filter(År == max(År)) %>%
+      ungroup()
     
     # Om det är väldigt låga värden
     y_limits <- ifelse(max(temp$Andel) < 5,10,100 )
@@ -441,6 +500,9 @@ huvudvark_tinnitus <- function(){
     p <- ggplot(temp, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
       geom_line(linewidth=1.5)+ geom_point(size=2)+
       geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+      geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+              direction = "y", nudge_x = 0.3, hjust = 0,
+              segment.color = NA, show.legend = FALSE) +
       # Riket – streckad linje
       geom_line(data = temp_r, aes(x = År, y = Andel, group = Kön, color = Kön),
                 linewidth = 1, linetype = "dashed") +
@@ -448,7 +510,8 @@ huvudvark_tinnitus <- function(){
       scale_fill_manual(values = kon_col)+
       scale_y_continuous(breaks = seq(0,y_limits,by=10),
                          limits = c(0,y_limits))+
-      scale_x_discrete(breaks = c(min(temp$År), max(temp$År))) +
+      scale_x_discrete(breaks = c(min(temp$År), max(temp$År)),
+               expand = expansion(mult = c(0.02, 0.10))) +
       labs(x="",
            title = str_wrap(paste("Andel med", str_to_lower(t), "– Uppsala län (4-årsmedelvärden)"), width=50),
            caption = "Källa: Folkhälsomyndigheten, Nationella folkhälsoenkäten",

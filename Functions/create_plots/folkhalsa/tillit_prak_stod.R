@@ -12,6 +12,11 @@ tillit_till_andra <-  function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Visa vart 5:e år på x-axeln
   ara <- unique(df$År)
@@ -25,6 +30,9 @@ tillit_till_andra <-  function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -32,7 +40,8 @@ tillit_till_andra <-  function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = visa_ar) +
+    scale_x_discrete(breaks = visa_ar,
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel som har svårt att lita på andra – Uppsala län (4-årsmedelvärden)", width=50),
@@ -86,6 +95,11 @@ em_prak_stod <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(variable, Kön) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
@@ -95,6 +109,9 @@ em_prak_stod <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~variable, ncol=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -102,7 +119,8 @@ em_prak_stod <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Andel som saknar emotionellt respektive praktiskt stöd – Uppsala län (4-årsmedelvärden)", width=50),

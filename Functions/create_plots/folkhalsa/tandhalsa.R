@@ -11,6 +11,11 @@ tandhalsa <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön, Tandhälsa) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
@@ -20,6 +25,9 @@ tandhalsa <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Tandhälsa, ncol=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -27,7 +35,8 @@ tandhalsa <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
     
     labs(x="",
          title = str_wrap("Uppskattad tandhälsa – Uppsala län (4-årsmedelvärden)", width=50),
@@ -79,6 +88,11 @@ tandhalsa_behov <- function(){
   year <- df$År
   
   df_rik <- df_rik %>% filter(År %in% year)
+
+  etiketter <- df %>%
+    group_by(Kön, Avstått.tandläkarvård) %>%
+    filter(År == max(År)) %>%
+    ungroup()
   
   # Färgschema
   kon_col <- c("Män" = "#4AA271",
@@ -88,6 +102,9 @@ tandhalsa_behov <- function(){
   p <- ggplot(df, aes(x=År, y =Andel, group = Kön, color =Kön, fill=Kön))+
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Avstått.tandläkarvård, ncol=2)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
+    geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
+            direction = "y", nudge_x = 0.3, hjust = 0,
+            segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Kön, color = Kön),
               linewidth = 1, linetype = "dashed") +
@@ -95,7 +112,8 @@ tandhalsa_behov <- function(){
     scale_fill_manual(values = kon_col)+
     scale_y_continuous(breaks = seq(0,100,by=10),
                        limits = c(0,100))+
-    scale_x_discrete(breaks = c(min(df$År), max(df$År))) +
+    scale_x_discrete(breaks = c(min(df$År), max(df$År)),
+             expand = expansion(mult = c(0.02, 0.10))) +
 
     labs(x="",
          title = str_wrap("Andel som avstått tandläkarvård trots behov – Uppsala län (4-årsmedelvärden)", width=50),
