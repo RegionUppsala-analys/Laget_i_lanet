@@ -61,13 +61,20 @@ suicid <- function(){
         ),
         size = 3
       ) +
+
       geom_text_repel(
         data = etiketter,
-        aes(label = round(X25..åldersstandardiserad, 1)),
+        aes(
+          x = År,
+          y = X25..åldersstandardiserad,
+          label = round(X25..åldersstandardiserad, 1),
+          color = Kön
+        ),
         direction = "y",
-        nudge_x = 0.3,
+        nudge_x = 2,
         hjust = 0,
         segment.color = NA,
+        fontface = "bold",
         show.legend = FALSE
       ) +
 

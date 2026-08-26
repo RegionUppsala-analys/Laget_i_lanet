@@ -571,7 +571,7 @@ narkotika <- function(){
     geom_line(linewidth=1.5)+ geom_point(size=2)+facet_wrap(~Kön)+
     geom_ribbon(aes(ymin = `Konfidensintervall.nedre.gräns`, ymax = `Konfidensintervall.övre.gräns`), alpha = 0.3, color =NA) +
     geom_text_repel(data = etiketter, aes(label = round(Andel, 1)),
-            direction = "y", nudge_x = 0.3, hjust = 0,
+            direction = "y", nudge_x = 1, hjust = 0,
             segment.color = NA, show.legend = FALSE) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Andel, group = Frekvens, color = Frekvens),

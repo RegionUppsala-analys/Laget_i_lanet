@@ -168,7 +168,7 @@ stillasittande <- function(){
           color = Stillasittande
         ),
         direction = "y",
-        nudge_x = 2,
+        nudge_x = 0.5,
         hjust = 0,
         segment.color = NA,
         fontface = "bold",
@@ -331,6 +331,7 @@ obesitas <- function(){
         ),
         size = 2
       ) +
+
       geom_text_repel(
         data = etiketter,
         aes(
