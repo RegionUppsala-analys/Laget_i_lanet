@@ -25,7 +25,7 @@ somn <- function(){
   
   # skapa plot 
   p <- ggplot(df, aes(x=År, y = Sömnbesvär_Andel, group = Kön, color =Kön, fill=Kön))+
-    geom_line(linewidth=1.5)+ geom_point(size=2)+
+    geom_line(linewidth=1.5) + geom_point(size=2)+
     geom_ribbon(aes(ymin = `Sömnbesvär_Konfidensintervall nedre gräns`, ymax = `Sömnbesvär_Konfidensintervall övre gräns`), alpha = 0.3, color =NA) +
     # Riket – streckad linje
     geom_line(data = df_rik, aes(x = År, y = Sömnbesvär_Andel, group = Kön, color = Kön),
@@ -45,8 +45,6 @@ somn <- function(){
          subtitle = str_wrap("Streckade linjer är Riksandelen", width = 50))+
     theme(plot.caption = element_text(hjust=0),
           plot.subtitle = element_text(hjust=0.5, color = "#B81867", size = 16, face = 'bold'))
-  
-  
   
   p
   
