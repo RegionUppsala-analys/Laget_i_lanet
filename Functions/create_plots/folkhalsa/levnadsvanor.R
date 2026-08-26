@@ -149,11 +149,17 @@ frukt_gront <- function(){
       ) +
       geom_text_repel(
         data = etiketter,
-        aes(label = round(Andel, 1)),
+        aes(
+          x = År,
+          y = Andel,
+          label = round(Andel, 1),
+          color = Frukt.och.grönt
+        ),
         direction = "y",
-        nudge_x = 0.3,
+        nudge_x = 2,
         hjust = 0,
         segment.color = NA,
+        fontface = "bold",
         show.legend = FALSE
       ) +
 
