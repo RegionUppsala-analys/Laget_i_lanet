@@ -93,6 +93,13 @@ stillasittande <- function(){
 
   cols <- c("#F9B000", "#019CD7", "#4AA271", "#D57667")
   names(cols) <- unique(df$Stillasittande)
+  stillasittande_levels = c("Sitter högst 3 timmar/dygn",
+             "Sitter 4-6 timmar/dygn",
+             "Sitter 7-9 timmar/dygn",
+             "Sitter minst 10 timmar/dygn")
+  df$Stillasittande <- factor(
+    df$Stillasittande, levels = stillasittande_levels
+  )
 
   # Uppsala län används som referens i alla figurer
   df_uppsala <- df %>%
@@ -267,6 +274,18 @@ obesitas <- function(){
   )
 
   names(cols) <- unique(df$Viktstatus..BMI.)
+
+    bmi_levels <- c(
+    "Undervikt (BMI 18,4 eller lägre)",
+    "Normalvikt (BMI 18,5-24,9)",
+    "Övervikt (BMI 25,0 - 29,9)",
+    "Obesitas (BMI 30,0 eller högre)"
+  )
+
+  df$Viktstatus..BMI. <- factor(
+    df$Viktstatus..BMI.,
+    levels = bmi_levels
+  )
 
   # Referensregion
   df_uppsala <- df %>%

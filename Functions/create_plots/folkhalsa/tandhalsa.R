@@ -75,9 +75,16 @@ tandhalsa <- function(){
 tandhalsa_behov <- function(){
   # läser in data
   df <- read.csv("Data/df_tandhalsa_avsta.csv") %>%
-    mutate(Avstått.tandläkarvård = case_when(
-      Avstått.tandläkarvård=="Avstått tandläkarvård trots behov"~"Totalt",
-      TRUE ~"Ekonomiska skäl"))
+    mutate(
+      Avstått.tandläkarvård = case_when(
+        Avstått.tandläkarvård == "Avstått tandläkarvård trots behov" ~ "Totalt",
+        TRUE ~ "Ekonomiska skäl"
+      ),
+      Avstått.tandläkarvård = factor(
+        Avstått.tandläkarvård,
+        levels = c("Totalt", "Ekonomiska skäl")
+      )
+    )
   
   # delar upp på region
   df_rik <- df %>% filter(Region == "Riket")
