@@ -21,7 +21,6 @@ func_df_byggnadsperiod <- function(){
          'ContentsCode' = '*'
     )
   
-  print_scb_converter_input(url, pxweb_query_list)
   # Download data 
   px_data <- pxweb_get(url = url,pxweb_query_list )
   

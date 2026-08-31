@@ -40,6 +40,12 @@ get_settings <- function() {
   )
   
   riket_narliggande <- c('00','03',"04", "05", "18", "19" )
+
+  upplat_colors <- c(
+    "hyresrätt" = "#D57667",
+    "bostadsrätt" = "#F9B000",
+    "äganderätt" = "#019CD7"
+  )
   
   # Returnera allt som lista
   list(
@@ -47,6 +53,7 @@ get_settings <- function() {
     kommuner = kommuner,
     kommun_colors = kommun_colors,
     riket_narliggande=riket_narliggande,
+    upplat_colors = upplat_colors,
     lanskod = lanskod,
     lan = lan
   )
