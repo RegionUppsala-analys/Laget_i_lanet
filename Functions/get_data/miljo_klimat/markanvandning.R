@@ -19,6 +19,12 @@ func_markanvandning <- function(){
   # Steg 4: Omvandla data till ett data.frame för enklare hantering i R
   px_markanvandning <- as.data.frame(px_data, column.name.type = "text", variable.value.type = "text")
   px_markanvandning <- na.omit(px_markanvandning)
+
+  px_markanvandning <- px_markanvandning |>
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   # Omstrukturera data så att markanvändningsklasser blir kolumner
   px_markanvandning <- px_markanvandning %>%

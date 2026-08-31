@@ -20,8 +20,10 @@ func_alder_hushall_fodelse25 <- function(){ # https://www.statistikdatabasen.scb
   # Visa tillgängliga regionkoder
   regioner <- meta$variables[[1]]$values
   
-  # Välj endast regioner som börjar med "03"
-  uppsala_koder <- regioner[startsWith(regioner, lanskod)]
+  # Välj endast Uppsala läns DeSO 2025-koder.
+  uppsala_koder <- regioner[
+    startsWith(regioner, lanskod) & endsWith(regioner, "_DeSO2025")
+  ]
   senaste_aret <-  max(as.integer(meta$variables[[4]]$values))
   
   px_get_list <- list(Region = uppsala_koder,
@@ -34,6 +36,11 @@ func_alder_hushall_fodelse25 <- function(){ # https://www.statistikdatabasen.scb
   
   # laddar data och gör till rätt format
   df_deso_hushallstyp <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_deso_hushallstyp <- df_deso_hushallstyp |>
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   # Finns dubbletter med NA 
   df_deso_hushallstyp <- df_deso_hushallstyp[complete.cases(df_deso_hushallstyp$`Antal hushåll`),] %>% rename(desokod=region)
@@ -137,8 +144,10 @@ func_alder_hushall_fodelse18 <- function(){
   # Visa tillgängliga regionkoder
   regioner <- meta$variables[[1]]$values
   
-  # Välj endast regioner som börjar med "03"
-  uppsala_koder <- regioner[startsWith(regioner, lanskod)]
+  # Välj endast äldre DeSO-koder för 2018-geometrin.
+  uppsala_koder <- regioner[
+    startsWith(regioner, lanskod) & grepl("^[0-9]{4}[A-Z][0-9]{4}$", regioner)
+  ]
   senaste_aret <- regioner <- max(as.integer(meta$variables[[4]]$values))
   
   px_get_list <- list(Region = uppsala_koder,
@@ -151,6 +160,11 @@ func_alder_hushall_fodelse18 <- function(){
   
   # laddar data och gör till rätt format
   df_deso_hushallstyp <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_deso_hushallstyp <- df_deso_hushallstyp |>
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   # Finns dubbletter med NA 
   df_deso_hushallstyp <- df_deso_hushallstyp[complete.cases(df_deso_hushallstyp$`Antal hushåll`),] %>% rename(desokod=region)
