@@ -46,8 +46,8 @@ install_and_load <- function() {
 
 # Lokala filer för snyggare grafer
 {
-  source("Script/install_load_packages.R")
-  source("Script/settings.R")
+  source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions/general_functions/install_load_packages.R")
+  source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions/general_functions/settings.R")
   install_and_load()
   settings <- get_settings()
   
@@ -146,7 +146,7 @@ skapa_index_laddaned_data_tid <- function(){
     # Den här behöver uppdateras när data släpps!!
     # Arbetsmarknadsstatus efter bostadens belägenhet, region (DeSO 2018 t.o.m. år 2023/RegSO 2020 t.o.m. år 2023), kön och ålder. Årligt register. År 2020 - 2023
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__AM__AM0210__AM0210G/ArRegDesoStatus/
-    url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/AM/AM0210/AM0210G/ArRegDesoStatusN'
+    url <- pxweb_url("TAB6680")
     
     # pxweb v2
     #  url <- print_pxwebv2('TAB6680')
@@ -163,7 +163,7 @@ skapa_index_laddaned_data_tid <- function(){
     
     # Låg respektive hög ekonomisk standard efter region och ålder. År 2011 - 2024
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__HE__HE0110__HE0110I/Tab4InkDesoRegso/
-    url2 <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0110/HE0110I/Tab4InkDesoRegso'
+    url2 <- pxweb_url("TAB6685")
     
     
     # pxweb v2
@@ -175,7 +175,7 @@ skapa_index_laddaned_data_tid <- function(){
     
     # Befolkning 25-64 år efter region, utbildningsnivå och år
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__UF__UF0506__UF0506D/UtbSUNBefDesoRegsoN/
-    url3 <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/UF/UF0506/UF0506D/UtbSUNBefDesoRegsoN'
+    url3 <- pxweb_url("TAB6534")
     
     # pxweb v2
     #  url3 <- print_pxwebv2('TAB6534')
@@ -216,6 +216,11 @@ skapa_index_laddaned_data_tid <- function(){
     
     # laddar data och gör till rätt format
     df_arbetsloshet <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+    df_arbetsloshet <- df_arbetsloshet |>
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
     
     # min för Årsintervall
     min_arb <- min(df_arbetsloshet$år)
@@ -232,6 +237,11 @@ skapa_index_laddaned_data_tid <- function(){
     
     # laddar data och gör till rätt format
     df_lag_standard <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+    df_lag_standard <- df_lag_standard |>
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
     # sparar data med variabler:
     
     # min för Årsintervall
@@ -256,6 +266,11 @@ skapa_index_laddaned_data_tid <- function(){
     
     # laddar data och gör till rätt format
     df_utbildning <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+    df_utbildning <- df_utbildning |>
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
     
     # Finns dubbletter med NA 
     
@@ -297,7 +312,7 @@ skapa_index_laddaned_data_tid <- function(){
     
     # Bostadsbyggnader efter region och byggnadstyp År 2010 - 2024
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__MI__MI0803__MI0803B/Bostadsbyggnad3/
-    url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/MI/MI0803/MI0803B/Bostadsbyggnad3'
+    url <- pxweb_url("TAB6620")
     
     # pxweb v2
     #  url <- print_pxwebv2('TAB6620')
@@ -315,6 +330,11 @@ skapa_index_laddaned_data_tid <- function(){
     
     # laddar data och gör till rätt format
     df_flerbostadshus <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+    df_flerbostadshus <- df_flerbostadshus |>
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
     # Finns dubbletter med NA 
     df_flerbostadshus <- df_flerbostadshus %>% rename(desokod=region) %>% 
       select(desokod,år, `Andel i procent`)
@@ -327,7 +347,7 @@ skapa_index_laddaned_data_tid <- function(){
   
   # Antal hushåll per region efter hushållstyp. År 2011 - 2024
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101Y/HushallDesoTyp/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101Y/HushallDesoTyp'
+  url <- pxweb_url("TAB6568")
   
   # pxweb v2
   #  url <- print_pxwebv2('TAB6568')
@@ -345,6 +365,11 @@ skapa_index_laddaned_data_tid <- function(){
   
   # laddar data och gör till rätt format
   df_hushall<- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_hushall <- df_hushall |>
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   # Finns dubbletter med NA 
   df_hushall <- df_hushall %>% rename(desokod=region)
@@ -369,7 +394,7 @@ skapa_index_laddaned_data_tid <- function(){
   
   # Bistånd - Inkomststruktur nettoinkomst efter region och kön. År 2011 - 2024
   # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__HE__HE0110__HE0110I/Tab2InkDesoRegso/
-  url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/HE/HE0110/HE0110I/Tab2InkDesoRegso'
+  url <- pxweb_url("TAB6683")
   
   # pxweb v2
   #  url <- print_pxwebv2('TAB6683')
@@ -388,6 +413,11 @@ skapa_index_laddaned_data_tid <- function(){
   
   # laddar data och gör till rätt format
   df_bistand<- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+  df_bistand <- df_bistand |>
+    tidyr::pivot_wider(
+      names_from = "tabellinnehåll",
+      values_from = "value"
+    )
   
   # Finns dubbletter med NA 
   df_bistand <- df_bistand %>% rename(desokod=region) %>% filter(!is.na(`Andel med inkomstslag, procent`)) %>% 
@@ -426,7 +456,7 @@ skapa_index_laddaned_data_tid <- function(){
   
   {
     # https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101Y/FolkmDesoLandKon/
-    url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101Y/FolkmDesoLandKon'
+    url <- pxweb_url("TAB6572")
     
     # pxweb v2
     #  url <- print_pxwebv2('TAB6572')
@@ -449,6 +479,11 @@ skapa_index_laddaned_data_tid <- function(){
     
     # laddar data och gör till rätt format
     df_deso_fodelse <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+    df_deso_fodelse <- df_deso_fodelse |>
+      tidyr::pivot_wider(
+        names_from = "tabellinnehåll",
+        values_from = "value"
+      )
     # Finns dubbletter med NA 
     df_deso_fodelse <- df_deso_fodelse %>% rename(desokod=region) 
     df_deso_fodelse <- na.omit(df_deso_fodelse)

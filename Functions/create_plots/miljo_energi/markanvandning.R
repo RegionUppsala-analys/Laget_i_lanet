@@ -94,3 +94,51 @@ karta_skog <- function(){
       ))
   fig  
 } 
+
+karta_landareal <- function(){
+  df <- read.csv("Data/df_deso_land_vatten.csv")
+  
+  suppressMessages({
+    suppressWarnings({
+      st_layers("Data/DeSO_2025.gpkg")
+      deso_sf <- st_read("Data/DeSO_2025.gpkg", layer = "DeSO_2025", quiet = TRUE) %>%
+        filter(lanskod == !!lanskod)
+    })
+  })
+  
+  df <- df %>%
+    rename(desokod = region) %>%
+    select(desokod, år, arealtyp, Hektar) %>%
+    pivot_wider(names_from = arealtyp, values_from = Hektar) %>%
+    group_by(desokod) %>%
+    mutate(andel_sjo = `inlandsvatten exkl de fyra stora sjöarna` / totalt * 100) %>%
+    ungroup()
+  
+  deso_sf_pop <- deso_sf %>%
+    left_join(df, by = "desokod") %>%
+    left_join(
+      df %>%
+        group_by(desokod) %>%
+        summarise(
+          popup_text = paste0(
+            desokod, " år ", år, "<br>",
+            "Landareal: ", round(landareal, 2), " ha (", round(landareal / totalt * 100, 1), "%)<br>",
+            "Inlandsvatten: ", round(`inlandsvatten exkl de fyra stora sjöarna`, 2), " ha (", round(`inlandsvatten exkl de fyra stora sjöarna` / totalt * 100, 1), "%)<br>",
+            "De fyra stora sjöarna: ", round(`de fyra stora sjöarna`, 2), " ha (", round(`de fyra stora sjöarna` / totalt * 100, 1), "%)<br>",
+            "Havsvatten: ", round(havsvatten, 2), " ha (", round(havsvatten / totalt * 100, 1), "%)"
+          ),
+          .groups = "drop"
+        ),
+      by = "desokod"
+    )
+  
+  mapview(
+    deso_sf_pop,
+    zcol = "andel_sjo",
+    legend = TRUE,
+    color = viridis::viridis(20),
+    layer.name = paste("Andel sjöareal", max(df$år, na.rm = TRUE)),
+    popup = deso_sf_pop$popup_text,
+    label = paste("DeSO:", deso_sf_pop$desokod)
+  )
+}

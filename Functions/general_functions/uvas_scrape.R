@@ -1,7 +1,7 @@
 ######### Skrapa MUCF för data om UVAS 
 {
-  source("Script/install_load_packages.R")
-  source("Script/settings.R")
+  source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions/general_functions/install_load_packages.R")
+  source("https://raw.githubusercontent.com/RegionUppsala-analys/Laget_i_lanet/main/Functions/general_functions/settings.R")
   install_and_load()
   settings <- get_settings()
   

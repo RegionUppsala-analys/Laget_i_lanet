@@ -13,7 +13,7 @@ kommuner <- c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", 
 ### Laddar ned data och sparar
 
 ####### Framskrivningar från SCB ############
-url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0401/BE0401A/BefProgRegFakN'
+url <- pxweb_url("TAB6008")
 
 px_get_list <- list(Region = kommunkod,
                     InrikesUtrikes = '*',
@@ -27,6 +27,11 @@ px_get <- pxweb_get(url,px_get_list)
 
 # laddar data och gör till rätt format
 df_folkmangdfram <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+df_folkmangdfram <- df_folkmangdfram |>
+  tidyr::pivot_wider(
+    names_from = "tabellinnehåll",
+    values_from = "value"
+  )
 df_folkmangdfram$ålder <- gsub("\\+", "", df_folkmangdfram$ålder)
 df_folkmangdfram$ålder <- as.integer(gsub(" år", "", df_folkmangdfram$ålder))
 df_folkmangdfram$år = as.integer(df_folkmangdfram$år)
@@ -34,7 +39,7 @@ write.csv(df_folkmangdfram, "Data/df_folkmangdfram.csv", row.names = F)
 
 ########## Folkmängd ############
 
-url <- 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101A/BefolkningNy'
+url <- pxweb_url("TAB638")
 
 px_get_list <- list(Region = kommunkod,
                     Kon = '*',
@@ -47,6 +52,11 @@ px_get <- pxweb_get(url,px_get_list)
 
 # laddar data och gör till rätt format
 df_folkmangd <- as.data.frame(px_get, column.name.type = "text", variable.value.type = "text")
+df_folkmangd <- df_folkmangd |>
+  tidyr::pivot_wider(
+    names_from = "tabellinnehåll",
+    values_from = "value"
+  )
 df_folkmangd <- df_folkmangd[df_folkmangd$ålder != 'totalt ålder',]
 
 df_folkmangd$ålder <- gsub("\\+", "", df_folkmangd$ålder)
