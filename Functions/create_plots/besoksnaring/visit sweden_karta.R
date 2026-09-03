@@ -104,7 +104,9 @@ plot_uppsala_tourism <- function(){
   
   # Bas-karta med länsgränser
   m <- leaflet(tourism_sf) |>
-    addProviderTiles("CartoDB.Positron") |>
+    addTiles(
+      urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
+    ) |>
     addPolygons(
       data = uppsala,
       color = "#B81867",

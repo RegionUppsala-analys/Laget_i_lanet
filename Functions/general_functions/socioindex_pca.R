@@ -799,7 +799,7 @@ socioindex_karta_tid <- function(){
   
   # Skapa mapview-objekt
   m1 <- mapview(first_year, zcol = "index_class", 
-                map.types = "CartoDB.Positron",
+                map.types = NULL,
                 col.regions = custom_colors, 
                 legend = TRUE,
                 popup = first_year$popup,
@@ -807,15 +807,17 @@ socioindex_karta_tid <- function(){
                 label=first_year$label)
   
   m2 <- mapview(last_year, zcol = "index_class", 
-                map.types = "CartoDB.Positron",
+                map.types = NULL,
                 col.regions = custom_colors, 
                 legend = F ,
                 popup = last_year$popup,
                 label=last_year$label)  
   
   # Slå ihop kartorna
-  
   map <- m1 | m2
+  map <- map %>% leaflet::addTiles(
+    urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
+  )
   
   
   # Variabel för att skapa text på kartan
@@ -1607,7 +1609,7 @@ socioindex_karta_tid_temp <- function(){
   # skapar karta
   m1 <- mapview(
     deso_sf_pop_join,
-    map.types = "CartoDB.Positron",
+    map.types = NULL,
     zcol = "area_type",
     legend = TRUE,
     layer.name = paste("Simpelt index",min_y),
@@ -1622,7 +1624,7 @@ socioindex_karta_tid_temp <- function(){
   
   
   m2 <- mapview(last_year, zcol = "index_class", 
-                map.types = "CartoDB.Positron",
+                map.types = NULL,
                 col.regions = custom_colors, 
                 legend = T ,
                 popup = last_year$popup,
@@ -1632,6 +1634,9 @@ socioindex_karta_tid_temp <- function(){
   # Slå ihop kartorna
   
   map <- m1 | m2
+  map <- map %>% leaflet::addTiles(
+    urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
+  )
   
   
   # Variabel för att skapa text på kartan
