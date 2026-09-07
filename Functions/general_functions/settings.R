@@ -39,7 +39,7 @@ get_settings <- function() {
     "Östhammar" = "#E67E22"
   )
   
-  riket_narliggande <- c('00','03',"04", "05", "18", "19" )
+  riket_narliggande <- c('00','03',"04", "05", "18", "19")
 
   upplat_colors <- c(
     "hyresrätt" = "#D57667",
