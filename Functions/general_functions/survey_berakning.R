@@ -11,6 +11,9 @@
 #' @param group2 Namn på andra gruppvariabeln (för facetning). T.ex. "B".
 #' @param psu Namn på PSU/klustervariabel (valfri). Default = NULL.
 #' @param strata Namn på strata-variabel (valfri). Default = NULL.
+#' @param ci_method Metod för konfidensintervall: "survey" använder survey-paketets
+#'   designbaserade variansberäkning, medan "fhm" följer Folkhälsomyndighetens
+#'   metod med kalibreringsviktad andel och n som antal giltiga svarande.
 #'
 #' @return Ett long-format dataframe med kolumner:
 #' \itemize{
@@ -35,7 +38,9 @@
 #'
 #' @export
 make_survey_plot_df <- function(df, var, weight, group1, group2,
-                                psu = NULL, strata = NULL) {
+                                psu = NULL, strata = NULL,
+                                ci_method = c("survey", "fhm")) {
+  ci_method <- match.arg(ci_method)
   
   # ---- Bibliotek som behövs ----
   if (!requireNamespace("survey", quietly = TRUE)) {
@@ -56,54 +61,65 @@ make_survey_plot_df <- function(df, var, weight, group1, group2,
   library(tidyr)
   library(stringr)
   
-  # ---- Dynamisk formel för survey design ----
-  ids_formula <- if (!is.null(psu)) as.formula(paste0("~", psu)) else ~1
-  strata_formula <- if (!is.null(strata)) as.formula(paste0("~", strata)) else NULL
-  weights_formula <- as.formula(paste("~", weight))
-  
-  design <- svydesign(
-    ids = ids_formula,
-    strata = strata_formula,
-    weights = weights_formula,
-    data = df,
-    nest = TRUE
-  )
-  
-  # ---- Proportioner per nivå av var, inom grupper ----
-  var_formula <- as.formula(paste0("~factor(", var, ")"))
-  group_formula <- as.formula(paste0("~", group1, " + ", group2))
-  
-  
   levels_var <- levels(as.factor(df[[var]]))
-  
-  
-  # Kör ett svar i taget för att ta ut andelar med rätt intervall
-  results <- lapply(levels_var, function(lvl) {
-    
-    form <- as.formula(paste0("~I(", var, " == '", lvl, "')"))
-    
-    est <- svyby(
-      form,
-      group_formula,
-      design,
-      svyciprop,
-      vartype = "ci",
-      method = "logit"
+
+  if (ci_method == "fhm") {
+    results <- lapply(levels_var, function(lvl) {
+      df %>%
+        mutate(
+          .fhm_indicator = as.character(.data[[var]]) == as.character(lvl),
+          .fhm_valid = !is.na(.data[[var]]) & !is.na(.data[[weight]])
+        ) %>%
+        group_by(.data[[group1]], .data[[group2]]) %>%
+        summarise(
+          prop = sum(.data[[weight]][.fhm_valid] * .fhm_indicator[.fhm_valid]) /
+            sum(.data[[weight]][.fhm_valid]),
+          n = sum(.fhm_valid),
+          .groups = "drop"
+        ) %>%
+        mutate(
+          ci_l = pmax(0, prop - 1.96 * sqrt(prop * (1 - prop) / n)),
+          ci_u = pmin(1, prop + 1.96 * sqrt(prop * (1 - prop) / n)),
+          level = lvl
+        )
+    })
+  } else {
+    ids_formula <- if (!is.null(psu)) as.formula(paste0("~", psu)) else ~1
+    strata_formula <- if (!is.null(strata)) as.formula(paste0("~", strata)) else NULL
+    weights_formula <- as.formula(paste("~", weight))
+    group_formula <- as.formula(paste0("~", group1, " + ", group2))
+
+    design <- svydesign(
+      ids = ids_formula,
+      strata = strata_formula,
+      weights = weights_formula,
+      data = df,
+      nest = TRUE
     )
-    
-    # Rename proportion and CI columns robustly
-    prop_col <- grep("^I\\(", names(est), value = TRUE)
-    ci_l_col <- grep("^ci_l", names(est), value = TRUE)
-    ci_u_col <- grep("^ci_u", names(est), value = TRUE)
-    
-    est <- est %>%
-      rename(prop = all_of(prop_col),
-             ci_l = all_of(ci_l_col),
-             ci_u = all_of(ci_u_col)) %>%
-      mutate(level = lvl)
-    
-    est
-  })
+
+    results <- lapply(levels_var, function(lvl) {
+      form <- as.formula(paste0("~I(", var, " == '", lvl, "')"))
+
+      est <- svyby(
+        form,
+        group_formula,
+        design,
+        svyciprop,
+        vartype = "ci",
+        method = "logit"
+      )
+
+      prop_col <- grep("^I\\(", names(est), value = TRUE)
+      ci_l_col <- grep("^ci_l", names(est), value = TRUE)
+      ci_u_col <- grep("^ci_u", names(est), value = TRUE)
+
+      est %>%
+        rename(prop = all_of(prop_col),
+               ci_l = all_of(ci_l_col),
+               ci_u = all_of(ci_u_col)) %>%
+        mutate(level = lvl)
+    })
+  }
   
   # slår ihop listan till df
   plot_df <- dplyr::bind_rows(results) %>%
