@@ -404,4 +404,106 @@ livslangd_uppsalalan <- function(){
         dpi = 96
       )
     }
+
+    # Uppsala län separat, utan streckad linje/jämförelse
+    ar_uppsala <- unique(df_region$År)
+
+    etiketter_uppsala <- df_region %>%
+      group_by(Kön) %>%
+      filter(År == max(År)) %>%
+      ungroup()
+
+    p_uppsala <- ggplot() +
+
+      geom_line(
+        data = df_region,
+        aes(
+          x = År,
+          y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+          colour = Kön,
+          group = Kön
+        ),
+        linewidth = 2
+      ) +
+
+      geom_point(
+        data = df_region,
+        aes(
+          x = År,
+          y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+          colour = Kön
+        ),
+        size = 3
+      ) +
+
+      geom_text(
+        data = etiketter_uppsala,
+        aes(
+          x = År,
+          y = Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+          label = round(
+            Medellivslängd..återstående.vid.födelsen..medelvärde.för.perioden.,
+            1
+          ),
+          colour = Kön
+        ),
+        hjust = -0.5,
+        size = 4,
+        fontface = "bold",
+        show.legend = FALSE
+      ) +
+
+      scale_color_manual(values = kon_col) +
+
+      scale_x_discrete(
+        breaks = c(
+          min(ar_uppsala),
+          max(ar_uppsala)
+        ),
+        expand = expansion(mult = c(0.02, 0.1))
+      ) +
+
+      scale_y_continuous(
+        breaks = y_breaks,
+        limits = c(y_min, y_max_axis)
+      ) +
+
+      labs(
+        x = "",
+        title = str_wrap(
+          paste(
+            "Medellivslängden i",
+            "Uppsala län",
+            "(5-årsmedelvärden)"
+          ),
+          width = 50
+        ),
+        caption = "Källa: SCB",
+        y = "Medellivslängd",
+        color = ""
+      ) +
+
+      theme(
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(
+          hjust = 0.5,
+          colour = "#B81867",
+          face = "bold"
+        )
+      )
+
+    ggsave(
+      "Figurer/livslangd_kom_Uppsala län.svg",
+      plot = p_uppsala,
+      width = 8,
+      height = 6
+    )
+
+    ggsave(
+      "Figurer/livslangd_kom_Uppsala län.png",
+      plot = p_uppsala,
+      width = 8,
+      height = 6,
+      dpi = 96
+    )
   }
