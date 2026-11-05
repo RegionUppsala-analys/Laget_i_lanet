@@ -54,6 +54,12 @@ Vid varje figur i qmd-filerna så har ALT-texter lagts in för att göra rapport
 Här lagras data. Det mesta sparas automatiskt via skript, men vissa dataset kräver manuell nedladdning.\
 Detta beskrivs i respektive rapports README och kommenteras ofta i `run_all_functions.R`.
 
+Folkmängd hämtas av [func_df_folkmangd.R](Functions/get_data/befolkning/func_df_folkmangd.R) via SCB:s API från TAB638 (till och med 2024) och TAB5557 (från 2025). Tabellerna sammanfogas till samma fil, `Data/df_folkmangd.csv`, med kolumnerna region, ålder, kön, år och Folkmängd. Endast män/kvinnor och ettårsåldrar 0–99 samt 100+ ingår; ålder 100 betecknar 100 år eller äldre. Civilstånd summeras av API:t för TAB638, medan totalen för samtliga civilstånd väljs i TAB5557. Överlappande åldersgrupper och könstotaler tas inte med.
+
+Från 2025 tillämpar SCB röjandeskydd med Cell Key Method (CKM). Importen behåller SCB:s cellvärden oförändrade. Summor av ettårsåldrar kan därför avvika från SCB:s separat publicerade totaler; sådana avvikelser ska inte korrigeras i importen.
+
+Rapporter som läser funktionen från GitHub använder den uppdaterade importen först när ändringen har pushats till den gren som rapportens källadress pekar på.
+
 ------------------------------------------------------------------------
 
 ### Figurer
