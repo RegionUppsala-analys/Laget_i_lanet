@@ -49,9 +49,7 @@ gastnatter_karta <- function(){
   pal_percap <- colorNumeric("PuRd",   domain = df_totalt$Per_invånare)
   
   m <- leaflet() %>%
-    addTiles(
-      urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
-    ) %>%
+    authenticate_carto_tiles() %>%
     
     # --- Layer 1: Totalt ---
     addPolygons(

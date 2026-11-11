@@ -68,6 +68,8 @@ Filerna `get_data/befolkning/SFI.R` och `get_data/befolkning/func_foddadoda_inut
 
 ### Figurer
 
+`authenticate_carto_tiles()` i [settings.R](Functions/general_functions/settings.R) autentiserar CARTO-bakgrunder för både Leaflet och mapview med miljövariabeln `CARTO_API_KEY`. Alla mapview-kartor och explicita CARTO-kartor i `Functions` använder hjälpfunktionen; rena OpenStreetMap-kartor behöver ingen CARTO-nyckel. Den ersätter mapviews oautentiserade Positron-/DarkMatter-lager i stället för att lägga ett nytt lager ovanpå dem; andra bakgrundsval, datalager och kontroller behålls. Kartor utan bakgrund får Positron. Läs in `settings.R` före kartfunktionerna. Lägg webbnyckeln i lokal, Git-ignorerad `.Renviron` och starta om R. Saknad nyckel ger fel. Nyckeln syns i renderad HTML och ska vara avsedd för klientbruk och domänbegränsad hos CARTO, inte en privat servernyckel.
+
 Alla genererade grafer sparas här. Mallen innehåller även statiska resurser, t.ex. regionens logotyp.
 
 `scatter_socioindex2()` kopplar index, födelseregion och områdesnamn via `desokod`. Det beräknade indexunderlaget behöver inte innehålla `kommunkod`; RegSO-namnen hämtas från SCB:s DeSO–RegSO-kopplingstabell.

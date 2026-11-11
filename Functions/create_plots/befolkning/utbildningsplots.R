@@ -320,7 +320,7 @@ utbildnings_karta <- function(){
     )
   
   
-  map
+  authenticate_carto_tiles(map)
   
 }
 

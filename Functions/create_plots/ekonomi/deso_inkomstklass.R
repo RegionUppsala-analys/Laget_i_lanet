@@ -217,6 +217,6 @@ deso_inkomstklass <- function(){
       legends.forEach((lg, i) => { if (i > 0) lg.style.display = 'none'; });
     }
   ")
-  return(combined_map)
+  return(authenticate_carto_tiles(combined_map))
   
 }

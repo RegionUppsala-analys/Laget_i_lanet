@@ -2,6 +2,66 @@
 ## Ställer in kommunnamn, färger etc####
 ########################################
 
+authenticate_carto_tiles <- function(map) {
+  api_key <- trimws(Sys.getenv("CARTO_API_KEY"))
+  if (!nzchar(api_key)) {
+    stop("CARTO_API_KEY saknas. Ange CARTO:s webbnyckel i .Renviron och starta om R.", call. = FALSE)
+  }
+  is_mapview <- inherits(map, "mapview")
+  widget <- if (is_mapview) map@map else map
+  if (!inherits(widget, "leaflet")) {
+    stop("Kartan måste vara ett Leaflet- eller mapview-objekt.", call. = FALSE)
+  }
+
+  styles <- c("CartoDB.Positron" = "rastertiles/positron", "CartoDB.DarkMatter" = "dark_all")
+  attribution <- paste(
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+  )
+  tile_call <- function(style, layer_id = NULL, group = NULL, options = leaflet::tileOptions()) {
+    leaflet::addTiles(
+      leaflet::leaflet(),
+      urlTemplate = paste0(
+        "https://basemaps.cartocdn.com/", style,
+        "/{z}/{x}/{y}.png?key=", utils::URLencode(api_key, reserved = TRUE)
+      ),
+      attribution = attribution, layerId = layer_id, group = group, options = options
+    )$x$calls[[1]]
+  }
+
+  # Byt endast CARTO-anrop, på samma plats i widgetens anropslista.
+  # Då bevaras lagerkontroller, andra bakgrundskartor och datalagrens ordning.
+  has_carto <- FALSE
+  widget$x$calls <- lapply(widget$x$calls, function(call) {
+    if (identical(call$method, "addProviderTiles") &&
+        startsWith(call$args[[1]], "CartoDB")) {
+      provider <- call$args[[1]]
+      if (!provider %in% names(styles)) {
+        stop(paste("CARTO-stilen saknar autentiseringsstöd:", provider), call. = FALSE)
+      }
+      has_carto <<- TRUE
+      options <- call$args[[4]]
+      if (is.null(options$maxZoom)) options$maxZoom <- 20
+      return(tile_call(styles[[provider]], call$args[[2]], call$args[[3]], options))
+    }
+    if (identical(call$method, "addTiles") &&
+        grepl("basemaps.cartocdn.com/", call$args[[1]], fixed = TRUE)) {
+      has_carto <<- TRUE
+      call$args[[1]] <- sub("\\?.*$", "", call$args[[1]])
+      call$args[[1]] <- paste0(call$args[[1]], "?key=", utils::URLencode(api_key, reserved = TRUE))
+    }
+    call
+  })
+  if (!has_carto) {
+    widget$x$calls <- append(widget$x$calls, list(tile_call("rastertiles/positron")), after = 0L)
+  }
+  if (is_mapview) {
+    map@map <- widget
+    return(map)
+  }
+  widget
+}
+
 get_settings <- function() {
   kommunkod <- c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319")
   kommuner <- c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby")

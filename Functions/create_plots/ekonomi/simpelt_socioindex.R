@@ -209,7 +209,7 @@ socioindex_karta <- function(){
     }
   
   ")
-  return(combined_map)
+  return(authenticate_carto_tiles(combined_map))
 }
 
 

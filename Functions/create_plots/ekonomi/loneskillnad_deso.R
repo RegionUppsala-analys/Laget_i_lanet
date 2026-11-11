@@ -236,6 +236,5 @@ loneskillnad_deso <- function(){
     }
   
   ")
-  combined_map
+  authenticate_carto_tiles(combined_map)
 }
-

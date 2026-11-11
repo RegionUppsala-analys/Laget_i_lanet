@@ -188,7 +188,7 @@ Deso_husall <- function(){
     }
   
   ")
-  return(map_combined)
+  return(authenticate_carto_tiles(map_combined))
 }
 
 
@@ -270,7 +270,7 @@ Deso_kon <- function(){
       )
     )
   
-  map
+  authenticate_carto_tiles(map)
   
 }
 
@@ -502,7 +502,7 @@ Deso_alder <- function(){
     }
   
   ")
-  return(combined_map)
+  return(authenticate_carto_tiles(combined_map))
 }
 
 Deso_fodd <- function(){
@@ -745,5 +745,5 @@ Deso_fodd <- function(){
     }
   
   ")
-  return(combined_map)
+  return(authenticate_carto_tiles(combined_map))
 }

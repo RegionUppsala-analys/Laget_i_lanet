@@ -169,7 +169,7 @@ karta_befolkning <- function() {
       )
     )
   
-  m  
+  authenticate_carto_tiles(m)
 }
 
 # Länsnivå

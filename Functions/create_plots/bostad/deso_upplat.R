@@ -90,8 +90,7 @@ deso_upplat <- function(){
     })
   })
   
-  map
+  authenticate_carto_tiles(map)
   
   
 }
-

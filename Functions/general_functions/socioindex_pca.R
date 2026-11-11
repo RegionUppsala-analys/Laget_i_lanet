@@ -815,9 +815,7 @@ socioindex_karta_tid <- function(){
   
   # Slå ihop kartorna
   map <- m1 | m2
-  map <- map %>% leaflet::addTiles(
-    urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
-  )
+  map <- authenticate_carto_tiles(map)
   
   
   # Variabel för att skapa text på kartan
@@ -1639,9 +1637,7 @@ socioindex_karta_tid_temp <- function(){
   # Slå ihop kartorna
   
   map <- m1 | m2
-  map@map <- map@map %>% leaflet::addTiles(
-    urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
-  )
+  map <- authenticate_carto_tiles(map)
   
   
   # Variabel för att skapa text på kartan

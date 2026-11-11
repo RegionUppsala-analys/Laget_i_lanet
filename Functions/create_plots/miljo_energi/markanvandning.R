@@ -132,7 +132,7 @@ karta_landareal <- function(){
       by = "desokod"
     )
   
-  mapview(
+  authenticate_carto_tiles(mapview(
     deso_sf_pop,
     zcol = "andel_sjo",
     legend = TRUE,
@@ -140,5 +140,5 @@ karta_landareal <- function(){
     layer.name = paste("Andel sjöareal", max(df$år, na.rm = TRUE)),
     popup = deso_sf_pop$popup_text,
     label = paste("DeSO:", deso_sf_pop$desokod)
-  )
+  ))
 }
