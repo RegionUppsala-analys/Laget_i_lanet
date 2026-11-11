@@ -70,6 +70,8 @@ Filerna `get_data/befolkning/SFI.R` och `get_data/befolkning/func_foddadoda_inut
 
 Alla genererade grafer sparas här. Mallen innehåller även statiska resurser, t.ex. regionens logotyp.
 
+`scatter_socioindex2()` kopplar index, födelseregion och områdesnamn via `desokod`. Det beräknade indexunderlaget behöver inte innehålla `kommunkod`; RegSO-namnen hämtas från SCB:s DeSO–RegSO-kopplingstabell.
+
 `sos_ersattning_static()` sparar både SVG och PNG för varje kommun så att rapportens båda nedladdningslänkar fungerar. Paketstödet inkluderar `patchwork` för sammansatta figurer och `rvest` för UVAS-hämtning. `get_settings()` registrerar Source Sans 3 (tidigare Source Sans Pro) med kodnamnet `sourcesanspro` och läser Arial från systemets typsnittssökvägar, inte från en platshållarsökväg. Google Fonts kräver internetanslutning vid första registreringen.
 
 Befolkningspyramiderna i [befolkningstree.R](Functions/create_plots/befolkning/befolkningstree.R) använder 2025 års data och skapar två figurer per kommun samt för länet som helhet: `pyramid_<region>` för hela befolkningen och `pyramid_fodd_<region>` med svenskfödda och utrikesfödda staplade i samma figur. Båda sparas som SVG och PNG (300 dpi). De tidigare separata filerna med suffix `_sve` och `_utl` skapas inte längre. Kör datahämtningen före plotfunktionerna om de lokala CSV-filerna saknar 2025. Funktionsnamnen `befolkningstree()` och `befolkningstree_fodelse()` kan användas; de äldre stavningarna `befolknigstree()` och `befolknigstree_fodelse()` fungerar också.
