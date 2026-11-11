@@ -22,6 +22,8 @@ install_and_load <- function() {
     "ggplot2",
     "tidyr",
     "cowplot",
+    "patchwork",
+    "rvest",
     "readxl",
     "stringr",
     "leaflet",
@@ -67,7 +69,6 @@ install_and_load <- function() {
   }
 
 }
-
 
 
 

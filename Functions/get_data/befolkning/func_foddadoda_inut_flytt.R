@@ -103,6 +103,3 @@ func_foddadoda_inut_flytt <- function(){
   
   print('Nedladdning av "df_inut_flytt.csv" genomfördes')
 }
-
-
-func_foddadoda_inut_flytt()

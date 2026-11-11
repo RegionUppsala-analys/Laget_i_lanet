@@ -212,9 +212,10 @@ sos_ersattning_static <- function(){
     # sparar plot
     svg_filename <- paste0("Figurer/sos_ersatt_", r, ".svg")
     ggsave(svg_filename, plot = p, device = "svg", width = 8, height = 6)
+    png_filename <- paste0("Figurer/sos_ersatt_", r, ".png")
+    ggsave(png_filename, plot = p, device = "png", width = 8, height = 6, dpi = 96)
   }
   
   
   
 }
-

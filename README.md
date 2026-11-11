@@ -56,15 +56,23 @@ Detta beskrivs i respektive rapports README och kommenteras ofta i `run_all_func
 
 Folkmängd hämtas av [func_df_folkmangd.R](Functions/get_data/befolkning/func_df_folkmangd.R) via SCB:s API från TAB638 (till och med 2024) och TAB5557 (från 2025). Tabellerna sammanfogas till samma fil, `Data/df_folkmangd.csv`, med kolumnerna region, ålder, kön, år och Folkmängd. Endast män/kvinnor och ettårsåldrar 0–99 samt 100+ ingår; ålder 100 betecknar 100 år eller äldre. Civilstånd summeras av API:t för TAB638, medan totalen för samtliga civilstånd väljs i TAB5557. Överlappande åldersgrupper och könstotaler tas inte med.
 
+Folkmängd efter födelseregion hämtas av [df_folkmangd_fodd.R](Functions/get_data/befolkning/df_folkmangd_fodd.R) enbart från TAB6645 för år 2025; tidigare data från TAB4823 ingår inte. För region används `kommunkod`, och alla värden i övriga dimensioner hämtas för 2025. Före export filtreras totaler och överlappande åldersgrupper bort med SCB:s koder. Filen `Data/df_folkmangd_fodd.csv` behåller kolumnerna region, ålder, kön, födelseregion, år och Antal, med kommunnamn, heltalsålder 0–100 (100 betyder 100+), män/kvinnor samt född i Sverige/utrikes född.
+
 Från 2025 tillämpar SCB röjandeskydd med Cell Key Method (CKM). Importen behåller SCB:s cellvärden oförändrade. Summor av ettårsåldrar kan därför avvika från SCB:s separat publicerade totaler; sådana avvikelser ska inte korrigeras i importen.
 
 Rapporter som läser funktionen från GitHub använder den uppdaterade importen först när ändringen har pushats till den gren som rapportens källadress pekar på.
+
+Filerna `get_data/befolkning/SFI.R` och `get_data/befolkning/func_foddadoda_inut_flytt.R` definierar datafunktioner utan att starta hämtning vid inläsning. Anropa funktionerna från rapportens körskript efter att paket, inställningar och datamappen har förberetts.
 
 ------------------------------------------------------------------------
 
 ### Figurer
 
 Alla genererade grafer sparas här. Mallen innehåller även statiska resurser, t.ex. regionens logotyp.
+
+`sos_ersattning_static()` sparar både SVG och PNG för varje kommun så att rapportens båda nedladdningslänkar fungerar. Paketstödet inkluderar `patchwork` för sammansatta figurer och `rvest` för UVAS-hämtning. `get_settings()` registrerar Source Sans 3 (tidigare Source Sans Pro) med kodnamnet `sourcesanspro` och läser Arial från systemets typsnittssökvägar, inte från en platshållarsökväg. Google Fonts kräver internetanslutning vid första registreringen.
+
+Befolkningspyramiderna i [befolkningstree.R](Functions/create_plots/befolkning/befolkningstree.R) använder 2025 års data och skapar två figurer per kommun samt för länet som helhet: `pyramid_<region>` för hela befolkningen och `pyramid_fodd_<region>` med svenskfödda och utrikesfödda staplade i samma figur. Båda sparas som SVG och PNG (300 dpi). De tidigare separata filerna med suffix `_sve` och `_utl` skapas inte längre. Kör datahämtningen före plotfunktionerna om de lokala CSV-filerna saknar 2025. Funktionsnamnen `befolkningstree()` och `befolkningstree_fodelse()` kan användas; de äldre stavningarna `befolknigstree()` och `befolknigstree_fodelse()` fungerar också.
 
 Om ett gammalt repo läses in med tillhörande figurer med data från interna databaser, så kan dessa användas om databasen ej uppdaterats. Detta tar då bort ett arbetsmoment och gör att jobbet för att kunna rendera den rapporten går snabbare. Koden för dessa grafer kommer då ej att kunna köras, vilket inte behövs, så länge grafen inte är interaktiv.
 

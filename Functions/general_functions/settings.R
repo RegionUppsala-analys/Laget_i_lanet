@@ -9,9 +9,13 @@ get_settings <- function() {
   lan <- "Uppsala län"
   lanskod <- "03"
   
-  # Fonts
-  try(showtext::font_add_google("Source Sans Pro", "sourcesanspro"), silent = TRUE)
-  font_add("Arial", "path/to/arial.ttf")
+  # Source Sans Pro heter numera Source Sans 3 hos Google Fonts.
+  if (!"sourcesanspro" %in% sysfonts::font_families()) {
+    sysfonts::font_add_google("Source Sans 3", "sourcesanspro")
+  }
+  if (!"Arial" %in% sysfonts::font_families()) {
+    sysfonts::font_add("Arial", regular = "arial.ttf", bold = "arialbd.ttf")
+  }
   showtext::showtext_auto()
   
   
