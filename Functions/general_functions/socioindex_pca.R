@@ -1533,9 +1533,16 @@ socioindex_karta_tid_temp <- function(){
   }  
   
   
+  # Kommunnamnet behövs i popup och etikett men finns inte i PCA-underlaget.
+  komnamn <- data.frame(
+    kommunnamn = kommuner,
+    kommunkod = kommunkod
+  )
+  deso_joined <- deso_joined %>% left_join(komnamn, by = "kommunkod")
+
   laskoden <- str_split(lanskod,"")[[1]][2]
   
-  df <- df %>% left_join(deso_joined %>% select(desokod,sp_geometry), by="desokod")%>%
+  df <- df %>% left_join(deso_joined %>% select(desokod,sp_geometry, kommunnamn), by="desokod")%>%
     st_as_sf() %>% filter(lanskod == !!laskoden)
   
   # popup och label
@@ -1634,7 +1641,7 @@ socioindex_karta_tid_temp <- function(){
   # Slå ihop kartorna
   
   map <- m1 | m2
-  map <- map %>% leaflet::addTiles(
+  map@map <- map@map %>% leaflet::addTiles(
     urlTemplate = "https://basemaps.cartocdn.com/rastertiles/positron/{z}/{x}/{y}.png?key=cb1_2u50_1_d6a866f2a70b7f9289d8f6d6"
   )
   
@@ -1680,6 +1687,3 @@ function(el, x) {
   
   map
 }
-
-
-
