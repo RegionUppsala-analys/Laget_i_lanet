@@ -74,6 +74,8 @@ Alla genererade grafer sparas här. Mallen innehåller även statiska resurser, 
 
 `socioindex_karta_tid_temp()` hämtar kommunnamn från de gemensamma inställningarna via geometrins `kommunkod` och för över namnen till PCA-underlaget via `desokod`. PCA-filens kolumner behöver därför inte innehålla kommunnamn.
 
+`scatter_socioindex_tid()` kopplar födelseregionsandelar till PCA-indexet via `desokod` och `år`, och områdesnamn via DeSO–RegSO-tabellen. Födelseregionsunderlaget behöver inte innehålla `kommunkod` eller kommunnamn.
+
 `sos_ersattning_static()` sparar både SVG och PNG för varje kommun så att rapportens båda nedladdningslänkar fungerar. Paketstödet inkluderar `patchwork` för sammansatta figurer och `rvest` för UVAS-hämtning. `get_settings()` registrerar Source Sans 3 (tidigare Source Sans Pro) med kodnamnet `sourcesanspro` och läser Arial från systemets typsnittssökvägar, inte från en platshållarsökväg. Google Fonts kräver internetanslutning vid första registreringen.
 
 Befolkningspyramiderna i [befolkningstree.R](Functions/create_plots/befolkning/befolkningstree.R) använder 2025 års data och skapar två figurer per kommun samt för länet som helhet: `pyramid_<region>` för hela befolkningen och `pyramid_fodd_<region>` med svenskfödda och utrikesfödda staplade i samma figur. Båda sparas som SVG och PNG (300 dpi). De tidigare separata filerna med suffix `_sve` och `_utl` skapas inte längre. Kör datahämtningen före plotfunktionerna om de lokala CSV-filerna saknar 2025. Funktionsnamnen `befolkningstree()` och `befolkningstree_fodelse()` kan användas; de äldre stavningarna `befolknigstree()` och `befolknigstree_fodelse()` fungerar också.

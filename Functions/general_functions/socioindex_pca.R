@@ -879,10 +879,8 @@ scatter_socioindex_tid <- function() {
   })
   
   
-  komnamn <- data.frame(kommunnamn=c("Knivsta", "Heby", "Tierp", "Uppsala", "Enköping", "Östhammar", "Håbo", "Älvkarleby"),
-                        kommunkod=c("0330", "0331", "0360", "0380", "0381", "0382", "0305", "0319"))
-  
-  deso_sf2 <- deso_sf2 %>% left_join(komnamn, by="kommunkod" )
+  # Födelseregionsunderlaget innehåller endast DeSO, år och andel.
+  # Områdesnamnen kopplas in nedan via DeSO–RegSO-tabellen.
   
   laskoden <- str_split(lanskod,"")[[1]][2]
   
